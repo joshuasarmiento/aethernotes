@@ -1,24 +1,36 @@
-export function generateSalt(): Uint8Array {
-  return window.crypto.getRandomValues(new Uint8Array(16));
+/**
+ * Generates a cryptographically random 16-byte salt.
+ */
+export function generateSalt(): Uint8Array<ArrayBuffer> {
+  return window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array<ArrayBuffer>;
 }
 
+/**
+ * Converts an ArrayBuffer to a lowercase hex string.
+ */
 export function bufToHex(buffer: ArrayBuffer): string {
-  return Array.prototype.map.call(new Uint8Array(buffer), (x: number) => ('00' + x.toString(16)).slice(-2)).join('');
+  return Array.prototype.map
+    .call(new Uint8Array(buffer), (x: number) => ('00' + x.toString(16)).slice(-2))
+    .join('');
 }
 
-export function hexToBuf(hexString: string): Uint8Array {
+/**
+ * Converts a hex string to a Uint8Array<ArrayBuffer>.
+ */
+export function hexToBuf(hexString: string): Uint8Array<ArrayBuffer> {
   const cleanHex = hexString.replace(/[^0-9a-fA-F]/g, '');
-  const bytes = new Uint8Array(cleanHex.length / 2);
+  const buffer = new ArrayBuffer(cleanHex.length / 2);
+  const bytes = new Uint8Array(buffer);
   for (let i = 0; i < bytes.length; i++) {
     bytes[i] = parseInt(cleanHex.substring(i * 2, i * 2 + 2), 16);
   }
-  return bytes;
+  return bytes as Uint8Array<ArrayBuffer>;
 }
 
 /**
  * Derives a 256-bit AES-GCM key from a passphrase and a salt using PBKDF2.
  */
-export async function deriveKey(passphrase: string, salt: Uint8Array): Promise<CryptoKey> {
+export async function deriveKey(passphrase: string, salt: Uint8Array<ArrayBuffer>): Promise<CryptoKey> {
   const enc = new TextEncoder();
   const keyMaterial = await window.crypto.subtle.importKey(
     'raw',
@@ -27,11 +39,11 @@ export async function deriveKey(passphrase: string, salt: Uint8Array): Promise<C
     false,
     ['deriveBits', 'deriveKey']
   );
-  
+
   return window.crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
-      salt: salt as any,
+      salt: salt,
       iterations: 100000,
       hash: 'SHA-256'
     },
@@ -47,20 +59,17 @@ export async function deriveKey(passphrase: string, salt: Uint8Array): Promise<C
  */
 export async function encryptText(text: string, key: CryptoKey): Promise<{ ciphertext: string; iv: string }> {
   const enc = new TextEncoder();
-  const iv = window.crypto.getRandomValues(new Uint8Array(12)); // 12-byte IV for GCM
-  
+  const iv = window.crypto.getRandomValues(new Uint8Array(12)) as Uint8Array<ArrayBuffer>; // 12-byte IV for GCM
+
   const ciphertextBuffer = await window.crypto.subtle.encrypt(
-    {
-      name: 'AES-GCM',
-      iv: iv as any
-    },
+    { name: 'AES-GCM', iv },
     key,
     enc.encode(text)
   );
 
   return {
     ciphertext: bufToHex(ciphertextBuffer),
-    iv: bufToHex(iv.buffer)
+    iv: bufToHex(iv.buffer),
   };
 }
 
@@ -73,12 +82,9 @@ export async function decryptText(ciphertextHex: string, ivHex: string, key: Cry
   const iv = hexToBuf(ivHex);
 
   const decryptedBuffer = await window.crypto.subtle.decrypt(
-    {
-      name: 'AES-GCM',
-      iv: iv as any
-    },
+    { name: 'AES-GCM', iv },
     key,
-    ciphertext as any
+    ciphertext
   );
 
   return dec.decode(decryptedBuffer);
