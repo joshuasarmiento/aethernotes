@@ -12,8 +12,8 @@
         <nav class="nav-links">
           <a href="#features">Features</a>
           <a href="#security">Security</a>
-          <router-link to="/download">Download</router-link>
-          <router-link to="/note" class="cta-btn">Launch App</router-link>
+          <a href="https://github.com/joshuasarmiento/aether-notes" target="_blank" rel="noopener">GitHub</a>
+          <router-link to="/note" class="cta-btn">Launch App →</router-link>
         </nav>
       </div>
     </header>
@@ -21,16 +21,17 @@
     <!-- Hero Section -->
     <section class="hero-section">
       <div class="hero-container">
+        <div class="hero-badge font-ui">Open source · Local-first · Zero-knowledge</div>
         <h1 class="hero-title font-display">
-          Your thoughts, <br />
+          Your thoughts,<br />
           <span class="italic-accent">fully yours.</span>
         </h1>
         <p class="hero-subtitle font-ui">
-          A local-first, zero-knowledge encrypted workspace. Built on Tiptap markdown shortcuts, IndexedDB sync, and Obsidian monochrome values.
+          A private notes workspace built on AES-256-GCM encryption, Tiptap markdown, and IndexedDB — runs entirely in your browser.
         </p>
         <div class="hero-ctas font-ui">
-          <router-link to="/note" class="hero-btn primary">Launch Editor</router-link>
-          <router-link to="/download" class="hero-btn secondary">Download Clients</router-link>
+          <router-link to="/note" class="hero-btn primary">Launch Editor →</router-link>
+          <a href="#features" class="hero-btn secondary">See Features</a>
         </div>
 
         <!-- Simulated Typing Workspace Mockup -->
@@ -46,14 +47,15 @@
           <div class="mockup-body">
             <div class="simulated-editor">
               <div v-for="(line, idx) in simulatedLines" :key="idx" :class="line.class">
-                <!-- Tag highlight simulation -->
                 <template v-if="line.type === 'h1'">
                   <span class="tag-hash"># </span>{{ line.text }}
                 </template>
-                <template v-else-if="line.type === 'body'">
-                  <span v-html="formatSimulatedBody(line.text)"></span>
+                <template v-else-if="line.type === 'h2'">
+                  <span class="tag-hash">## </span>{{ line.text }}
                 </template>
-                <!-- Cursor element on active line -->
+                <template v-else-if="line.type === 'body'">
+                  <span v-html="formatSimulatedBody(line.text, idx)"></span>
+                </template>
                 <span v-if="idx === activeLineIdx" class="simulated-cursor"></span>
               </div>
 
@@ -81,48 +83,45 @@
           <!-- Card 1: Local first -->
           <div class="feature-card">
             <div class="feature-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect width="18" height="18" x="3" y="3" rx="2" />
-                <path d="M12 8v8M8 12h8" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>
               </svg>
             </div>
             <h3 class="feature-heading">Local-First Speed</h3>
-            <p class="feature-desc">All notes are cached locally inside IndexedDB via Dexie.js. Instant load times, works offline, and keeps data where it belongs.</p>
+            <p class="feature-desc">All notes live in IndexedDB via Dexie.js. Instant load times, fully offline-capable, and your data never leaves your device.</p>
           </div>
 
           <!-- Card 2: Markdown -->
           <div class="feature-card">
             <div class="feature-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
               </svg>
             </div>
             <h3 class="feature-heading">Markdown Shortcuts</h3>
-            <p class="feature-desc">Dynamic ProseMirror rules convert standard formatting cues (`#`, `-`, `[]`) into rich headers, checkboxes, and blocks instantly.</p>
+            <p class="feature-desc">ProseMirror input rules turn `#`, `-`, `[]` into rich headings, lists, and checkboxes as you type — no mode switching.</p>
           </div>
 
           <!-- Card 3: Command palette -->
           <div class="feature-card">
             <div class="feature-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
               </svg>
             </div>
             <h3 class="feature-heading">Command Palette</h3>
-            <p class="feature-desc">Typo-tolerant fuzzy searching via Fuse.js. Launch commands, switch themes, navigate folders, or search titles inside `Cmd+K` palette.</p>
+            <p class="feature-desc">Fuse.js fuzzy search powers a `Cmd+K` palette to switch notes, run commands, and navigate your workspace in milliseconds.</p>
           </div>
 
           <!-- Card 4: Nesting folders -->
           <div class="feature-card">
             <div class="feature-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
               </svg>
             </div>
             <h3 class="feature-heading">Nested Hierarchies</h3>
-            <p class="feature-desc">Organize notes within drag-and-drop folders, assign custom label tags, and toggle favorites list pinning in the sidebar pane.</p>
+            <p class="feature-desc">Drag-and-drop folders, custom label tags, and pinned favorites — organize notes the way your brain actually works.</p>
           </div>
         </div>
       </div>
@@ -131,9 +130,9 @@
     <!-- Cryptographic Security Panel -->
     <section id="security" class="security-section">
       <div class="section-container">
-        <h2 class="section-title font-display text-center">Zero-Knowledge Architecture</h2>
-        <p class="security-subtitle font-ui text-center">
-          How local cryptography keeps your notes completely unreadable to third parties.
+        <h2 class="section-title font-display">Zero-Knowledge Architecture</h2>
+        <p class="security-subtitle font-ui">
+          How local cryptography keeps your notes unreadable to anyone but you.
         </p>
 
         <div class="crypto-flow font-ui">
@@ -141,31 +140,29 @@
           <div class="flow-step">
             <div class="flow-badge">1</div>
             <h4 class="flow-title">Derivation Salt</h4>
-            <p class="flow-desc">Derived from a random local salt, your passphrase goes through PBKDF2 with 100,000 iterations to output a secure hash.</p>
+            <p class="flow-desc">Your passphrase is hashed through PBKDF2 with 100,000 iterations and a unique random salt stored locally.</p>
           </div>
-          <div class="flow-connector">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
+          <div class="flow-connector" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
             </svg>
           </div>
           <!-- Flow 2 -->
           <div class="flow-step">
             <div class="flow-badge">2</div>
             <h4 class="flow-title">AES-256-GCM Key</h4>
-            <p class="flow-desc">The Web Crypto API compiles the derived hash into an encryption key. The key stays in memory and is never written to disk.</p>
+            <p class="flow-desc">The Web Crypto API derives an encryption key that lives only in memory — never serialized, never written to disk.</p>
           </div>
-          <div class="flow-connector">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
+          <div class="flow-connector" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
             </svg>
           </div>
           <!-- Flow 3 -->
           <div class="flow-step">
             <div class="flow-badge">3</div>
             <h4 class="flow-title">Encrypted Storage</h4>
-            <p class="flow-desc">Before saving to IndexedDB, notes are encrypted with GCM. Disk records are unreadable ciphertext without your passcode.</p>
+            <p class="flow-desc">Notes are ciphertext in IndexedDB. Without your passphrase, the database contains only unreadable bytes.</p>
           </div>
         </div>
       </div>
@@ -175,11 +172,16 @@
     <footer class="footer font-ui">
       <div class="footer-container">
         <h3 class="footer-title font-display">Own your mind.</h3>
-        <p class="footer-subtitle">Try Aether Notes on the web, fully offline-capable.</p>
-        <router-link to="/note" class="footer-btn">Start Writing Now</router-link>
-        <div class="copyright">
-          &copy; 2026 Aether Notes. Open source under the MIT License.
+        <p class="footer-subtitle">Try Aether Notes in the browser. No sign-up, no servers, no compromise.</p>
+        <router-link to="/note" class="footer-btn">Start Writing Now →</router-link>
+        <div class="footer-links">
+          <a href="https://github.com/joshuasarmiento/aether-notes" target="_blank" rel="noopener">GitHub</a>
+          <span class="footer-sep">·</span>
+          <a href="https://github.com/joshuasarmiento/aether-notes/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Contributing</a>
+          <span class="footer-sep">·</span>
+          <a href="https://github.com/joshuasarmiento/aether-notes/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
         </div>
+        <div class="copyright">© 2026 Aether Notes. Open source under the MIT License.</div>
       </div>
     </footer>
   </div>
@@ -206,50 +208,38 @@ const showSlashMenu = ref(false);
 const demoScript = [
   { line: 0, text: 'Getting Started with Aether', delay: 40 },
   { action: 'nextLine', targetLine: 1 },
-  { line: 1, text: 'This is a minimal notes workspace.', delay: 30 },
+  { line: 1, text: 'A minimal notes workspace.', delay: 30 },
   { action: 'nextLine', targetLine: 2 },
   { line: 2, text: '/', delay: 200 },
   { action: 'showMenu' },
   { action: 'selectH2' },
-  { line: 2, text: 'A secure, local-first vault.', delay: 40 },
+  { line: 2, text: 'Secure. Local. Yours.', delay: 50 },
   { action: 'nextLine', targetLine: 3 },
-  { line: 3, text: 'Notes are encrypted with @crypto before saving.', delay: 30 },
+  { line: 3, text: 'Encrypted with @crypto before saving.', delay: 30 },
 ];
 
 let timers: ReturnType<typeof setTimeout>[] = [];
 
-function formatSimulatedBody(text: string) {
+function formatSimulatedBody(text: string, idx: number) {
   if (!text) {
-    if (activeLineIdx.value === 1 && simulatedLines.value[1].text === '') {
-      return 'Start writing or type \'/\' for block formatting...';
+    if (idx === 1 && simulatedLines.value[1]?.text === '') {
+      return "Start writing or type '/' for blocks...";
     }
     return '';
   }
-  // format tags
   return text.replace(/(@[a-zA-Z0-9_-]+)/g, '<span class="sim-tag">$1</span>');
 }
-
-onMounted(() => {
-  // Start simulated typing demo
-  runDemo();
-});
-
-onUnmounted(() => {
-  timers.forEach(t => clearTimeout(t));
-});
 
 function runDemo() {
   let timeAccumulator = 800;
 
   demoScript.forEach(step => {
     if (step.line !== undefined && step.text !== undefined) {
-      // Type out string character by character
       const chars = step.text.split('');
       chars.forEach((char, charIdx) => {
         const timer = setTimeout(() => {
           activeLineIdx.value = step.line as number;
           simulatedLines.value[step.line as number].text += char;
-          // remove placeholder tag on typing
           if (step.line === 1) {
             simulatedLines.value[1].class = 'sim-p';
           }
@@ -267,25 +257,22 @@ function runDemo() {
       timers.push(timer);
       timeAccumulator += 300;
     } else if (step.action === 'showMenu') {
-      const timer = setTimeout(() => {
-        showSlashMenu.value = true;
-      }, timeAccumulator);
+      const timer = setTimeout(() => { showSlashMenu.value = true; }, timeAccumulator);
       timers.push(timer);
       timeAccumulator += 800;
     } else if (step.action === 'selectH2') {
       const timer = setTimeout(() => {
         showSlashMenu.value = false;
-        // transform slash command line to h2
         simulatedLines.value[2].type = 'h2';
         simulatedLines.value[2].class = 'sim-h2';
-        simulatedLines.value[2].text = ''; // delete slash
+        simulatedLines.value[2].text = '';
       }, timeAccumulator);
       timers.push(timer);
       timeAccumulator += 200;
     }
   });
 
-  // Loop after completing
+  // Loop
   const loopTimer = setTimeout(() => {
     simulatedLines.value = [
       { text: '', type: 'h1', class: 'sim-h1' },
@@ -295,9 +282,23 @@ function runDemo() {
     activeLineIdx.value = 0;
     showSlashMenu.value = false;
     runDemo();
-  }, timeAccumulator + 5000);
+  }, timeAccumulator + 4000);
   timers.push(loopTimer);
 }
+
+onMounted(() => {
+  // Allow the landing page to scroll by overriding the global body overflow
+  document.body.style.overflow = 'auto';
+  document.body.style.height = 'auto';
+  runDemo();
+});
+
+onUnmounted(() => {
+  // Restore the app-shell body style when navigating to the editor
+  document.body.style.overflow = 'hidden';
+  document.body.style.height = '100vh';
+  timers.forEach(t => clearTimeout(t));
+});
 </script>
 
 <style scoped>
@@ -305,23 +306,24 @@ function runDemo() {
   background-color: var(--bg);
   color: var(--text-primary);
   min-height: 100vh;
-  overflow-y: auto;
-  position: relative;
   display: flex;
   flex-direction: column;
 }
 
-/* Header */
+/* ── Header ── */
 .header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: var(--topbar-height);
-  background: rgba(var(--bg), 0.8);
-  backdrop-filter: blur(8px);
+  /* Use a solid color with opacity trick — rgba doesn't work with hex CSS vars */
+  background-color: var(--bg);
+  opacity: 0.97;
   border-bottom: 1px solid var(--border-subtle);
   z-index: 1000;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .header-container {
@@ -331,42 +333,50 @@ function runDemo() {
   max-width: 1080px;
   height: 100%;
   margin: 0 auto;
-  padding: 0 var(--space-md);
+  padding: 0 var(--space-lg);
 }
 
 .logo {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  text-decoration: none;
+  color: inherit;
 }
 
 .logo-icon {
   color: var(--text-primary);
+  flex-shrink: 0;
 }
 
 .logo-text {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
 }
 
 .logo-notes {
   font-size: 9px;
   color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
+  font-family: 'DM Mono', monospace;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-lg);
 }
 
 .nav-links a {
   text-decoration: none;
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: 11px;
   transition: color var(--duration-fast) var(--ease-out);
+  letter-spacing: 0.3px;
 }
 
 .nav-links a:hover {
@@ -374,30 +384,49 @@ function runDemo() {
 }
 
 .cta-btn {
-  background: var(--text-primary);
+  background: var(--text-primary) !important;
   color: var(--bg) !important;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: var(--radius);
   font-weight: 500;
+  font-size: 11px !important;
+  transition: opacity var(--duration-fast) var(--ease-out) !important;
 }
 
-/* Hero Section */
+.cta-btn:hover {
+  opacity: 0.8 !important;
+  color: var(--bg) !important;
+}
+
+/* ── Hero ── */
 .hero-section {
-  padding-top: 120px;
-  padding-bottom: 60px;
+  padding-top: calc(var(--topbar-height) + 80px);
+  padding-bottom: 80px;
   text-align: center;
 }
 
 .hero-container {
-  max-width: 720px;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 0 var(--space-md);
+  padding: 0 var(--space-lg);
+}
+
+.hero-badge {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 4px 12px;
+  margin-bottom: var(--space-lg);
+  text-transform: uppercase;
 }
 
 .hero-title {
-  font-size: clamp(40px, 8vw, 64px);
-  line-height: 1.1;
-  letter-spacing: -1px;
+  font-size: clamp(42px, 8vw, 72px);
+  line-height: 1.05;
+  letter-spacing: -1.5px;
   margin-bottom: var(--space-md);
   font-weight: normal;
 }
@@ -405,14 +434,15 @@ function runDemo() {
 .italic-accent {
   font-style: italic;
   font-family: 'Instrument Serif', Georgia, serif;
+  color: var(--text-secondary);
 }
 
 .hero-subtitle {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.7;
   margin-bottom: var(--space-lg);
-  max-width: 480px;
+  max-width: 460px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -426,16 +456,21 @@ function runDemo() {
 
 .hero-btn {
   text-decoration: none;
-  padding: 10px 20px;
-  font-size: 13px;
+  padding: 9px 20px;
+  font-size: 12px;
   border-radius: var(--radius);
   font-weight: 500;
   transition: all var(--duration-fast) var(--ease-out);
+  letter-spacing: 0.2px;
 }
 
 .hero-btn.primary {
-  background: var(--accent);
+  background: var(--text-primary);
   color: var(--bg);
+}
+
+.hero-btn.primary:hover {
+  opacity: 0.85;
 }
 
 .hero-btn.secondary {
@@ -447,15 +482,15 @@ function runDemo() {
   background: var(--hover-bg);
 }
 
-/* Simulated Editor Mockup */
+/* ── Editor Mockup ── */
 .editor-mockup {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
   overflow: hidden;
   background: var(--bg-elevated);
   text-align: left;
-  max-width: 600px;
+  max-width: 580px;
   margin: 0 auto;
 }
 
@@ -479,80 +514,89 @@ function runDemo() {
   border-radius: 50%;
 }
 
-.dot.red { background: #FF5F56; }
+.dot.red   { background: #FF5F56; }
 .dot.yellow { background: #FFBD2E; }
 .dot.green { background: #27C93F; }
 
 .mockup-title {
   flex: 1;
   text-align: center;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-secondary);
-  margin-right: 36px; /* offset dots to center title */
+  margin-right: 36px;
+  letter-spacing: 0.3px;
 }
 
 .mockup-body {
   padding: var(--space-lg);
-  min-height: 240px;
+  min-height: 220px;
   position: relative;
 }
 
 .simulated-editor {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 6px;
 }
 
 .sim-h1 {
   font-family: 'Instrument Serif', Georgia, serif;
-  font-size: 24px;
+  font-size: 22px;
   color: var(--text-primary);
   display: flex;
   align-items: center;
+  gap: 2px;
+  min-height: 1.4em;
 }
 
 .sim-h2 {
   font-family: 'Instrument Serif', Georgia, serif;
-  font-size: 18px;
+  font-size: 17px;
   color: var(--text-primary);
   font-weight: 600;
   margin-top: var(--space-xs);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 1.4em;
 }
 
 .sim-p {
-  font-family: 'Source Serif 4', Georgia, serif;
-  font-size: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: 1.6;
+  min-height: 1.6em;
 }
 
 .sim-p.placeholder {
-  color: var(--text-secondary);
   opacity: 0.4;
 }
 
 .tag-hash {
-  opacity: 0.4;
+  opacity: 0.35;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7em;
 }
 
 :deep(.sim-tag) {
   color: var(--accent);
   background-color: var(--accent-subtle);
-  padding: 0 4px;
+  padding: 1px 5px;
   border-radius: 3px;
   font-family: 'DM Mono', monospace;
   font-size: 0.9em;
   font-weight: 500;
 }
 
-/* Simulated Cursor */
+/* Cursor */
 .simulated-cursor {
   display: inline-block;
   width: 2px;
-  height: 1.2em;
+  height: 1.1em;
   background: var(--text-primary);
-  margin-left: 2px;
-  animation: blink 0.8s infinite;
+  margin-left: 1px;
+  animation: blink 0.9s infinite;
   vertical-align: middle;
 }
 
@@ -560,16 +604,16 @@ function runDemo() {
   50% { opacity: 0; }
 }
 
-/* Slash menu mockup */
+/* Slash menu */
 .simulated-slash-menu {
   position: absolute;
   left: var(--space-lg);
-  top: 130px;
+  top: 120px;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-  width: 140px;
+  box-shadow: var(--shadow-md);
+  width: 148px;
   padding: var(--space-xs) 0;
   z-index: 10;
 }
@@ -578,16 +622,15 @@ function runDemo() {
   font-size: 9px;
   text-transform: uppercase;
   color: var(--text-secondary);
-  padding: 4px var(--space-sm);
+  padding: 4px var(--space-sm) 2px;
   font-weight: bold;
+  letter-spacing: 0.5px;
 }
 
 .slash-item {
   font-size: 11px;
-  padding: 6px var(--space-sm);
-  cursor: pointer;
+  padding: 5px var(--space-sm);
   color: var(--text-primary);
-  text-align: left;
 }
 
 .slash-item.active {
@@ -595,24 +638,25 @@ function runDemo() {
   color: var(--accent);
 }
 
-/* Features Grid */
+/* ── Features Grid ── */
 .features-section {
-  padding: 80px 0;
+  padding: 96px 0;
   border-top: 1px solid var(--border-subtle);
   background: var(--bg-sunken);
 }
 
 .section-container {
-  max-width: 1080px;
+  max-width: 1040px;
   margin: 0 auto;
-  padding: 0 var(--space-md);
+  padding: 0 var(--space-lg);
 }
 
 .section-title {
-  font-size: clamp(28px, 5vw, 36px);
+  font-size: clamp(28px, 4vw, 38px);
   text-align: center;
   margin-bottom: var(--space-2xl);
   font-weight: normal;
+  letter-spacing: -0.5px;
 }
 
 .features-grid {
@@ -621,7 +665,7 @@ function runDemo() {
   gap: var(--space-md);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
   .features-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -632,42 +676,47 @@ function runDemo() {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
-  transition: transform var(--duration-base) var(--ease-out);
+  transition: transform var(--duration-base) var(--ease-out),
+              box-shadow var(--duration-base) var(--ease-out);
 }
 
 .feature-card:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .feature-icon {
-  color: var(--text-primary);
+  color: var(--text-secondary);
   margin-bottom: var(--space-sm);
 }
 
 .feature-heading {
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--text-primary);
   margin-bottom: var(--space-xs);
+  letter-spacing: -0.2px;
 }
 
 .feature-desc {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: 1.65;
 }
 
-/* Security Section */
+/* ── Security Section ── */
 .security-section {
-  padding: 80px 0;
+  padding: 96px 0;
   border-top: 1px solid var(--border-subtle);
 }
 
 .security-subtitle {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-secondary);
-  margin-top: calc(-1 * var(--space-sm));
+  text-align: center;
+  margin-top: calc(-1 * var(--space-md));
   margin-bottom: var(--space-2xl);
+  line-height: 1.6;
 }
 
 .crypto-flow {
@@ -677,11 +726,10 @@ function runDemo() {
   gap: var(--space-md);
 }
 
-@media (min-width: 900px) {
+@media (min-width: 860px) {
   .crypto-flow {
     flex-direction: row;
     align-items: flex-start;
-    justify-content: space-between;
   }
 }
 
@@ -692,12 +740,11 @@ function runDemo() {
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
   text-align: center;
-  position: relative;
 }
 
 .flow-badge {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: var(--text-primary);
   color: var(--bg);
@@ -710,16 +757,17 @@ function runDemo() {
 }
 
 .flow-title {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--text-primary);
   margin-bottom: var(--space-xs);
+  letter-spacing: -0.2px;
 }
 
 .flow-desc {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .flow-connector {
@@ -727,19 +775,20 @@ function runDemo() {
   align-items: center;
   justify-content: center;
   color: var(--border);
+  flex-shrink: 0;
   transform: rotate(90deg);
 }
 
-@media (min-width: 900px) {
+@media (min-width: 860px) {
   .flow-connector {
     transform: rotate(0deg);
-    padding-top: var(--space-xl);
+    padding-top: 48px;
   }
 }
 
-/* Footer */
+/* ── Footer ── */
 .footer {
-  padding: 80px 0;
+  padding: 96px 0 64px;
   background: var(--bg-sunken);
   border-top: 1px solid var(--border-subtle);
   text-align: center;
@@ -747,21 +796,23 @@ function runDemo() {
 }
 
 .footer-container {
-  max-width: 500px;
+  max-width: 480px;
   margin: 0 auto;
-  padding: 0 var(--space-md);
+  padding: 0 var(--space-lg);
 }
 
 .footer-title {
-  font-size: 32px;
+  font-size: 36px;
   font-weight: normal;
   margin-bottom: var(--space-xs);
+  letter-spacing: -0.5px;
 }
 
 .footer-subtitle {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-secondary);
   margin-bottom: var(--space-lg);
+  line-height: 1.6;
 }
 
 .footer-btn {
@@ -771,18 +822,66 @@ function runDemo() {
   color: var(--bg);
   padding: 10px 24px;
   border-radius: var(--radius);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   margin-bottom: var(--space-2xl);
   transition: opacity var(--duration-fast) var(--ease-out);
 }
 
 .footer-btn:hover {
-  opacity: 0.9;
+  opacity: 0.85;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.footer-links a {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.footer-links a:hover {
+  color: var(--text-primary);
+}
+
+.footer-sep {
+  font-size: 11px;
+  color: var(--border);
 }
 
 .copyright {
   font-size: 10px;
   color: var(--text-muted);
+  letter-spacing: 0.2px;
+}
+
+/* ── Transition ── */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+/* ── Fade in animation ── */
+.animate-fade-in {
+  animation: fadeIn 0.6s var(--ease-out) 0.2s both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 </style>

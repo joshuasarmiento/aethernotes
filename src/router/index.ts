@@ -8,11 +8,6 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/LandingPage.vue'),
   },
   {
-    path: '/download',
-    name: 'download',
-    component: () => import('@/views/DownloadPage.vue'),
-  },
-  {
     path: '/',
     component: AppShell,
     children: [
