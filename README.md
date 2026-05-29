@@ -1,142 +1,156 @@
-# 🌌 Aether Notes
+# Aether Notes
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Vue 3](https://img.shields.io/badge/Vue-3.x-4fc08d.svg)](https://vuejs.org/)
 [![Tiptap](https://img.shields.io/badge/Editor-Tiptap-black.svg)](https://tiptap.dev/)
 [![Dexie](https://img.shields.io/badge/Database-Dexie.js-blue.svg)](https://dexie.org/)
 
-A minimal, secure, local-first, and markdown-first note-taking web application. Designed around Notion's visual layout principles and Obsidian's privacy-focused, stealth monochrome aesthetic. Powered by **Vue 3 (Composition API)**, **Tiptap**, **Pinia**, and **Dexie (IndexedDB)**.
+A minimal, secure, local-first note-taking web application. Designed around Notion's visual layout principles and Obsidian's privacy-focused monochrome aesthetic. Built with **Vue 3** (Composition API), **Tiptap**, **Pinia**, and **Dexie.js** (IndexedDB).
 
 ---
 
-## ✦ Technical Documentation & Contribution Quick-Links
-*   **System Architecture & Decisions**: [docs/architecture.md](file:///Users/joshuasarmiento/Documents/Github/Aether%20Notes/docs/architecture.md) (Dexie vs OPFS, cryptosystem workflows, search scaling limits, soft-delete design, PWA setup, a11y, and testing).
-*   **Contribution Guidelines**: [CONTRIBUTING.md](file:///Users/joshuasarmiento/Documents/Github/Aether%20Notes/CONTRIBUTING.md) (Conventional Commits, git hook enforcement, PR templates, and coding standards).
+## Documentation
+
+| Document | Description |
+|---|---|
+| [docs/architecture.md](docs/architecture.md) | System design, cryptosystem workflow, storage decisions, PWA setup, and accessibility notes |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Commit conventions, PR templates, branch strategy, and coding standards |
 
 ---
 
-## ✦ Key Features
+## Features
 
-### 1. Markdown-First Editor (Tiptap Engine)
-*   **Title Autogeneration**: Note titles are derived dynamically from the first line of content (which defaults to an `H1` block for a clean look). Manually typed titles are locked to prevent unwanted overwriting.
-*   **Dynamic Placeholders**: Focus placeholders show `"Title"` when focusing on an empty H1 heading, and `"Start writing or '/' for command formatting menu"` elsewhere.
-*   **Notion-Style Slash (`/`) Commands**: Type `/` on any line below the title to trigger the formatting bubble menu (Paragraph, H1, H2, H3). Selecting a format automatically deletes the `/` character.
-*   **Real-time Clickable Outline**: A collapsible right-hand Table of Contents sidebar that dynamically indexes document headings (`H1`–`H3`) and supports smooth scrolling to heading elements on click.
-*   **Contextual Bubble Menu**: Context-aware floating toolbar menu offering paragraph/heading toggles, bold, italic, strikethrough, highlight, inline code, and link inputs.
-*   **Inline Tag Highlighting**: Automatic regex-based parsing and terracotta highlighting of `@tags` inside blocks. Clicking a tag in the sidebar scrolls the editor smoothly to its first occurrence.
+### Markdown-First Editor
 
-### 2. Local-First Security & Vault Encryption
-*   **AES-256-GCM Encryption**: Client-side encryption derived via **PBKDF2** (100,000 iterations) from a user-defined passphrase using the native Web Crypto API.
-*   **Zero-Knowledge Architecture**: The decryption key is held strictly in-memory and never written to the local disk. If a passphrase is forgotten, **data recovery is cryptographically impossible**.
-*   **Passphrase Changing**: When changing the passphrase, Aether Notes runs a batch update transaction, decrypting note records using the current key, re-encrypting them with the new derived key, and saving them back to the database.
-*   **IndexedDB Persistent Storage**: Managed by **Dexie.js** with local indexing of note metadata, favorites, pinned states, and trash.
+- **Title Autogeneration** — Note titles derive from the first H1 heading. Manually typed titles lock to prevent overwriting.
+- **Slash Commands** — Type `/` to trigger the formatting menu (Paragraph, H1, H2, H3). Selecting a format removes the slash character.
+- **Bubble Menu** — Context-aware floating toolbar for bold, italic, strikethrough, highlight, inline code, and links.
+- **Live Outline** — Collapsible right-hand Table of Contents that indexes H1–H3 headings with smooth scroll-to navigation.
+- **Inline Tag Highlighting** — Regex-based parsing and highlight rendering for `@tags` inline. Sidebar tag click scrolls to first occurrence.
 
-### 3. Progressive Web App (PWA) & Offline-First Strategy
-*   **Pre-caching assets**: Pre-caches assets (HTML, styles, scripts, fonts) upon installation to ensure the application works offline.
-*   **Auto-Update Service Worker**: Service Worker configured for `registerType: 'autoUpdate'` in Vite, ensuring any new updates are mounted and activated immediately without manual refresh cycles.
-*   **Installability**: Fully compliant with modern Chrome and Safari PWA criteria (standalone window display, custom manifest, and offline assets fetching).
+### Encryption and Security
 
-### 4. Accessibility (a11y) Layouts
-*   **Focus Trapping**: Keyboard navigation traps focus within active dialogs (Settings Modal, Command Palette) and returns focus cleanly to the editor on close.
-*   **ARIA Accessibility**: Folder trees use `role="tree"` and folders act as `role="treeitem"`, tracking toggle visibility via `aria-expanded` and interactive triggers via `aria-label`.
-*   **Keybind Integrations**: Keyboard shortcuts for core workflows:
-    *   `Cmd/Ctrl+K` to toggle the Command Palette.
-    *   `Escape` to exit focus menus or palettes.
-    *   Arrow keys to navigate through palette searches and tree lists.
+- **AES-256-GCM** — Client-side encryption via the native Web Crypto API. Key derivation uses PBKDF2 (100,000 iterations) from a user passphrase.
+- **Zero-Knowledge** — The decryption key lives only in memory and is never written to disk. Forgotten passphrases cannot be recovered.
+- **Passphrase Rotation** — Re-encrypts all notes in a single batch transaction when the passphrase changes.
+- **Local-Only Storage** — All data persists in IndexedDB via Dexie.js. No network requests. No servers.
 
-### 5. Typography & Editor Customization
-*   **Custom Fonts**: Choose between system **Sans-Serif**, classic **Editorial Serif**, or coder-friendly **Monospace** typography styles.
-*   **Variable Font Sizes**: Slide-adjustable body sizes ranging from 14px to 24px.
-*   **Editor Preferences**: Real-time styling updates for:
-    *   **Line Wrapping**: Uncheck to keep long paragraphs on single lines with horizontal scrolling.
-    *   **Line Numbers**: Displays code-style running numbers in the left gutter using pure CSS counters.
-    *   **Spellcheck**: Toggle native browser grammar check inside Tiptap.
+### Progressive Web App
 
-### 6. Fuzzy Search & Command Palette
-*   **Command Palette (`Cmd/Ctrl+K`)**: Keyboard-centric search hub powered by **Fuse.js** for typo-tolerant query matching over titles, bodies, and tags. Includes instant trigger commands (e.g. create a note, toggle themes, delete a note).
+- **Offline-First** — Pre-caches HTML, styles, scripts, and fonts on install via Workbox.
+- **Auto-Update** — Service Worker configured with `registerType: 'autoUpdate'` for seamless background updates.
+- **Installable** — Meets Chrome and Safari PWA criteria: standalone display mode, custom manifest, offline asset fetching.
 
-### 7. Nested Folders & Organization
-*   **Hierarchical Trees**: Drag-and-drop support to nest folders, rename directories, and customize label accent colors (synchronized dynamically between light/dark theme variables).
-*   **Soft Deletions & Purges**: Trashed notes are held for 30 days before automatic purging. Users can configure the trash retention window (7 days, 30 days, or "Never") inside settings and trigger export backups before permanent deletion.
+### Accessibility
 
----
+- **Focus Trapping** — Keyboard focus is contained within active dialogs (Settings, Command Palette) and restored to the editor on close.
+- **ARIA Tree** — The sidebar folder tree uses `role="tree"` / `role="treeitem"` with `aria-expanded` and `aria-label` attributes.
+- **Keyboard Shortcuts** — `Cmd/Ctrl+K` for Command Palette, `Escape` to dismiss, arrow keys for palette and tree navigation.
 
-## ✦ Testing Strategy
+### Typography and Customization
 
-Contributors must verify their code utilizing the following test structure:
+- **Font Families** — System Sans-Serif, Editorial Serif, or Monospace, switchable from Settings.
+- **Font Size** — Adjustable from 14px to 24px via a range slider.
+- **Editor Options** — Line wrapping, line numbers (CSS counter-based), and native spellcheck toggles.
 
-*   **Unit Tests (Vitest)**: Core utilities testing, focusing on cryptographically derived key generation (`crypto.ts`) and database transactions (`db.ts`).
-    ```bash
-    bun run test
-    ```
-*   **Component & Integration Tests (Vitest + Vue Test Utils)**: Validating styling syncs between Pinia states, custom Tiptap extensions, and UI wrappers.
-*   **End-to-End & PWA Tests (Playwright)**: Verifying installation flows, drag-and-drop hierarchy operations, and offline IndexedDB persistence.
+### Search and Navigation
+
+- **Command Palette** — Fuzzy search powered by Fuse.js over note titles, bodies, and tags. Includes instant commands: create note, toggle theme, delete note.
+
+### Organization
+
+- **Nested Folders** — Drag-and-drop hierarchy with custom label accent colors synchronized across light and dark themes.
+- **Trash and Purge** — Soft-deleted notes are held for a configurable window (7 days, 30 days, or never) before permanent removal.
 
 ---
 
-## ✦ Directory Structure
+## Project Structure
 
 ```text
 aether-notes/
-├── .github/                 # GitHub workflows & Pull Request templates
-├── docs/                    # System designs & Architectural Decision Records
-│   └── architecture.md      # Detailed system constraints & crypto design
-├── public/                  # Static assets & PWA manifest icons
+├── .github/                 # GitHub workflows and PR templates
+├── docs/
+│   └── architecture.md      # System design and architectural decisions
+├── public/                  # Static assets and PWA manifest icons
 ├── src/
-│   ├── assets/              # Design system styling files
-│   │   ├── styles/
-│   │   │   ├── tokens.css       # HSL-tailored light/dark color tokens
-│   │   │   ├── global.css       # Resets, scrollbars, noise overlay
-│   │   │   ├── editor.css       # Tiptap specific styling overrides
-│   │   │   └── transitions.css  # Vue transition animation timing rules
-│   ├── components/          # Reusable Vue components
-│   │   ├── editor/          # Tiptap wrapper, BubbleMenu toolbar
-│   │   ├── layout/          # AppShell grid, TopBar, StatusBar
-│   │   ├── note-list/       # Note search items and filtering
-│   │   ├── search/          # Command palette search hub
-│   │   ├── settings/        # Preferences panel & encryption options
-│   │   └── sidebar/         # Folder tree lists, tag lists, footer
-│   ├── composables/         # Shared state wrappers (useTheme, useKeyboard)
-│   ├── extensions/          # Custom ProseMirror/Tiptap extensions
-│   ├── lib/                 # Core utilities (crypto, DB, nanoid)
-│   ├── stores/              # Pinia global states (notes, folders, settings)
+│   ├── assets/
+│   │   └── styles/
+│   │       ├── tokens.css       # Light/dark color tokens
+│   │       ├── global.css       # Resets, scrollbars, noise overlay
+│   │       ├── editor.css       # Tiptap styling overrides
+│   │       └── transitions.css  # Vue transition timing
+│   ├── components/
+│   │   ├── editor/          # Tiptap wrapper and BubbleMenu
+│   │   ├── layout/          # AppShell, TopBar, StatusBar
+│   │   ├── note-list/       # Note items and filtering
+│   │   ├── search/          # Command Palette
+│   │   ├── settings/        # Preferences panel and encryption
+│   │   └── sidebar/         # Folder tree, tag list, footer
+│   ├── composables/         # useTheme, useKeyboard
+│   ├── extensions/          # Custom Tiptap/ProseMirror extensions
+│   ├── lib/                 # Crypto, DB, and utility helpers
+│   ├── stores/              # Pinia stores: notes, folders, settings
 │   ├── types/               # TypeScript interfaces
-│   ├── App.vue              # Main container
-│   └── main.ts              # Entry mounting logic
-├── index.html               # Main template anchor
-├── vite.config.ts           # Bundler and PWA service worker config
-└── tsconfig.json            # TypeScript options
+│   ├── views/               # LandingPage and route-level components
+│   ├── App.vue
+│   └── main.ts
+├── index.html
+├── vite.config.ts
+└── tsconfig.json
 ```
 
 ---
 
-## ✦ Getting Started
+## Getting Started
 
 ### Prerequisites
-*   Node.js (v18+)
-*   [Bun](https://bun.sh/) (recommended) or npm
 
-### Installation
-Clone the repository and install dependencies:
+- Node.js v18 or later
+- [Bun](https://bun.sh/) (recommended) or npm
+
+### Install
+
 ```bash
-git clone https://github.com/your-username/aether-notes.git
-cd aether-notes
+git clone https://github.com/joshuasarmiento/aethernotes.git
+cd aethernotes
 bun install
 ```
 
-### Development Server
+### Development
+
 ```bash
 bun run dev
 ```
 
 ### Production Build
+
 ```bash
 bun run build
 ```
 
 ---
 
-## ✦ License
+## Testing
 
-This project is licensed under the [MIT License](LICENSE) - see the LICENSE file for details.
+| Layer | Tool | Scope |
+|---|---|---|
+| Unit | Vitest | `crypto.ts` key derivation, `db.ts` transactions |
+| Component | Vitest + Vue Test Utils | Pinia state sync, Tiptap extensions, UI wrappers |
+| End-to-End | Playwright | PWA install flow, drag-and-drop, offline persistence |
+
+```bash
+bun run test
+```
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide — commit conventions, branch naming, PR checklist, and code standards.
+
+---
+
+## License
+
+[MIT](LICENSE) — Copyright (c) 2026 Joshua Sarmiento.
