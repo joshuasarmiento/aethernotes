@@ -1,0 +1,85 @@
+export function generateSalt(): Uint8Array {
+  return window.crypto.getRandomValues(new Uint8Array(16));
+}
+
+export function bufToHex(buffer: ArrayBuffer): string {
+  return Array.prototype.map.call(new Uint8Array(buffer), (x: number) => ('00' + x.toString(16)).slice(-2)).join('');
+}
+
+export function hexToBuf(hexString: string): Uint8Array {
+  const cleanHex = hexString.replace(/[^0-9a-fA-F]/g, '');
+  const bytes = new Uint8Array(cleanHex.length / 2);
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = parseInt(cleanHex.substring(i * 2, i * 2 + 2), 16);
+  }
+  return bytes;
+}
+
+/**
+ * Derives a 256-bit AES-GCM key from a passphrase and a salt using PBKDF2.
+ */
+export async function deriveKey(passphrase: string, salt: Uint8Array): Promise<CryptoKey> {
+  const enc = new TextEncoder();
+  const keyMaterial = await window.crypto.subtle.importKey(
+    'raw',
+    enc.encode(passphrase),
+    { name: 'PBKDF2' },
+    false,
+    ['deriveBits', 'deriveKey']
+  );
+  
+  return window.crypto.subtle.deriveKey(
+    {
+      name: 'PBKDF2',
+      salt: salt as any,
+      iterations: 100000,
+      hash: 'SHA-256'
+    },
+    keyMaterial,
+    { name: 'AES-GCM', length: 256 },
+    true,
+    ['encrypt', 'decrypt']
+  );
+}
+
+/**
+ * Encrypts cleartext string using AES-GCM 256-bit with the derived key.
+ */
+export async function encryptText(text: string, key: CryptoKey): Promise<{ ciphertext: string; iv: string }> {
+  const enc = new TextEncoder();
+  const iv = window.crypto.getRandomValues(new Uint8Array(12)); // 12-byte IV for GCM
+  
+  const ciphertextBuffer = await window.crypto.subtle.encrypt(
+    {
+      name: 'AES-GCM',
+      iv: iv as any
+    },
+    key,
+    enc.encode(text)
+  );
+
+  return {
+    ciphertext: bufToHex(ciphertextBuffer),
+    iv: bufToHex(iv.buffer)
+  };
+}
+
+/**
+ * Decrypts ciphertext hex string using AES-GCM 256-bit with the derived key.
+ */
+export async function decryptText(ciphertextHex: string, ivHex: string, key: CryptoKey): Promise<string> {
+  const dec = new TextDecoder();
+  const ciphertext = hexToBuf(ciphertextHex);
+  const iv = hexToBuf(ivHex);
+
+  const decryptedBuffer = await window.crypto.subtle.decrypt(
+    {
+      name: 'AES-GCM',
+      iv: iv as any
+    },
+    key,
+    ciphertext as any
+  );
+
+  return dec.decode(decryptedBuffer);
+}

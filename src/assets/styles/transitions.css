@@ -1,0 +1,64 @@
+/* Transition and Animation classes */
+
+/* Fade-in and slide-down (Search Modal) */
+.animate-slide-down {
+  animation: slideDown var(--duration-base) var(--ease-out) forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Staggered Note List fade-up animations */
+.note-item-animate {
+  opacity: 0;
+  animation: fadeUp var(--duration-base) var(--ease-out) forwards;
+}
+
+.note-item-animate:nth-child(1) { animation-delay: 0ms; }
+.note-item-animate:nth-child(2) { animation-delay: 30ms; }
+.note-item-animate:nth-child(3) { animation-delay: 60ms; }
+.note-item-animate:nth-child(4) { animation-delay: 90ms; }
+.note-item-animate:nth-child(5) { animation-delay: 120ms; }
+.note-item-animate:nth-child(n+6) { animation-delay: 150ms; }
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Sidebar Slide Transition (Vue transition component) */
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform var(--duration-base) var(--ease-out), opacity var(--duration-base) var(--ease-out);
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+/* Fade transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}

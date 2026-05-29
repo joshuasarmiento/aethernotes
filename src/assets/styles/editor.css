@@ -1,0 +1,295 @@
+/* Tiptap and ProseMirror Editor Styling */
+
+.tiptap-editor {
+  outline: none;
+  font-size: var(--editor-font-size, 16px);
+  font-family: var(--editor-font-family, inherit);
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+/* Editor base spacing */
+.tiptap-editor p {
+  margin-bottom: 0.6em;
+}
+
+/* Headings spacing and fonts */
+.tiptap-editor h1,
+.tiptap-editor h2,
+.tiptap-editor h3,
+.tiptap-editor h4 {
+  font-family: var(--editor-font-heading, 'Instrument Serif', Georgia, serif);
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.35;
+  margin-top: 1em;
+  margin-bottom: 0.3em;
+}
+
+.tiptap-editor h1 {
+  font-size: 1.8em;
+}
+
+.tiptap-editor h2 {
+  font-size: 1.45em;
+}
+
+.tiptap-editor h3 {
+  font-size: 1.25em;
+}
+
+.tiptap-editor h4 {
+  font-size: 1.1em;
+}
+
+/* Lists formatting */
+.tiptap-editor ul,
+.tiptap-editor ol {
+  padding-left: 1.2em;
+  margin-top: 0.2em;
+  margin-bottom: 0.6em;
+}
+
+.tiptap-editor li {
+  margin-bottom: 0.2em;
+}
+
+/* Blockquotes */
+.tiptap-editor blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 1.25em;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin: 0.8em 0;
+}
+
+/* Inline Code */
+.tiptap-editor code {
+  font-family: 'JetBrains Mono', monospace;
+  background-color: var(--bg-sunken);
+  color: var(--accent);
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+/* Code Blocks */
+.tiptap-editor pre {
+  background-color: var(--bg-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 1em 1.25em;
+  overflow-x: auto;
+  margin: 0.8em 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.tiptap-editor pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+  font-size: 0.9em;
+}
+
+/* Task Lists and Checkboxes */
+.tiptap-editor ul[data-type="taskList"] {
+  list-style: none;
+  padding: 0;
+}
+
+.tiptap-editor ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.3em;
+}
+
+.tiptap-editor ul[data-type="taskList"] li>label {
+  margin-right: 0.75em;
+  user-select: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-top: 0.25em;
+}
+
+.tiptap-editor ul[data-type="taskList"] li>label input[type="checkbox"] {
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid var(--text-muted);
+  border-radius: 3px;
+  background-color: transparent;
+  display: inline-grid;
+  place-content: center;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.tiptap-editor ul[data-type="taskList"] li>label input[type="checkbox"]:checked {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.tiptap-editor ul[data-type="taskList"] li>label input[type="checkbox"]:checked::before {
+  content: "";
+  width: 6px;
+  height: 3px;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  transform: rotate(-45deg) translate(0.5px, -1px);
+}
+
+.tiptap-editor ul[data-type="taskList"] li>div {
+  flex: 1;
+}
+
+.tiptap-editor ul[data-type="taskList"] li[data-checked="true"]>div {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+/* Tables spacing and alignment */
+.tiptap-editor table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0.8em 0;
+  overflow: hidden;
+}
+
+.tiptap-editor td,
+.tiptap-editor th {
+  border: 1px solid var(--border);
+  min-width: 1em;
+  padding: 8px 12px;
+  position: relative;
+  vertical-align: top;
+}
+
+.tiptap-editor th {
+  background-color: var(--bg-sunken);
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Highlight styling extension */
+.tiptap-editor mark {
+  background-color: var(--accent-subtle);
+  color: inherit;
+  border-bottom: 2px solid var(--accent);
+  padding: 0 2px;
+}
+
+/* Code block highlight.js syntax highlighting colors */
+.hljs-comment,
+.hljs-quote {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: var(--accent);
+}
+
+.hljs-string,
+.hljs-doctag {
+  color: #608c73;
+  /* premium calm pine green */
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.hljs-type,
+.hljs-class .hljs-title {
+  color: var(--accent);
+}
+
+/* Image layout */
+.tiptap-editor img {
+  border-radius: var(--radius);
+  max-width: 100%;
+  margin: 0.8em auto;
+  border: 1px solid var(--border-subtle);
+}
+
+/* Ghost placeholder style */
+.tiptap-editor p.is-editor-empty:first-child::before,
+.tiptap-editor h1.is-editor-empty:first-child::before,
+.tiptap-editor .is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--text-muted);
+  pointer-events: none;
+  height: 0;
+}
+
+/* Active cursor highlight */
+.tiptap-editor .ProseMirror-focused {
+  caret-color: var(--accent);
+}
+
+/* Editor Preferences support */
+
+/* Line Wrapping */
+.tiptap-editor {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.tiptap-editor.no-wrapping {
+  white-space: pre !important;
+  word-break: normal !important;
+  overflow-x: auto;
+}
+
+/* Line Numbers */
+.tiptap-editor.show-line-numbers {
+  counter-reset: line-counter;
+  padding-left: 3.5em; /* Room for numbers */
+  position: relative;
+}
+
+.tiptap-editor.show-line-numbers > * {
+  position: relative;
+}
+
+.tiptap-editor.show-line-numbers > *::before {
+  counter-increment: line-counter;
+  content: counter(line-counter);
+  position: absolute;
+  left: -2.8em;
+  width: 2em;
+  text-align: right;
+  color: var(--text-muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  user-select: none;
+  opacity: 0.45;
+  top: 0.45em; /* Visual vertical alignment */
+}
+
+/* Ignore bubble menus or outlines that might be loaded inside the DOM wrapper */
+.tiptap-editor.show-line-numbers > .tiptap-bubble-menu,
+.tiptap-editor.show-line-numbers > .bubble-menu {
+  counter-increment: none;
+}
+.tiptap-editor.show-line-numbers > .tiptap-bubble-menu::before,
+.tiptap-editor.show-line-numbers > .bubble-menu::before {
+  display: none !important;
+}
