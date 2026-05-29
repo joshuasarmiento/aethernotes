@@ -94,17 +94,6 @@
         </svg>
       </button>
 
-      <!-- Code Block -->
-      <button :class="['menu-btn', { 'is-active': editor.isActive('codeBlock') }]"
-        @click="deleteSlashThen(() => editor!.chain().focus().toggleCodeBlock().run())" title="Code Block">
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
-          <path d="M8 9h8" />
-          <path d="M8 13h6" />
-        </svg>
-      </button>
-
       <!-- Highlight -->
       <button :class="['menu-btn', { 'is-active': editor.isActive('highlight') }]"
         @click="deleteSlashThen(() => editor!.chain().focus().toggleHighlight().run())" title="Highlight (Cmd+Shift+H)">

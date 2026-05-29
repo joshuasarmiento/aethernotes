@@ -83,7 +83,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onBeforeUnmount, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
-import { useEditor, EditorContent, VueNodeViewRenderer } from '@tiptap/vue-3';
+import { useEditor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Typography from '@tiptap/extension-typography';
@@ -96,10 +96,9 @@ import { TableHeader } from '@tiptap/extension-table-header';
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
 import Highlight from '@tiptap/extension-highlight';
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Image from '@tiptap/extension-image';
 import { Markdown } from 'tiptap-markdown';
-import { createLowlight, common } from 'lowlight';
+
 
 // Custom extensions
 import TagHighlight from '@/extensions/TagHighlight';
@@ -114,7 +113,6 @@ import { deriveKey, hexToBuf } from '@/lib/crypto';
 
 // Subcomponents
 import EditorToolbar from './EditorToolbar.vue';
-import CodeBlockComponent from './CodeBlockComponent.vue';
 
 const route = useRoute();
 const notesStore = useNotesStore();
@@ -148,8 +146,7 @@ const isLocked = computed(() => {
 
 
 
-// Setup syntax highlighter
-const lowlight = createLowlight(common);
+
 
 // Setup Editor
 const editor = useEditor({
@@ -193,13 +190,7 @@ const editor = useEditor({
     Highlight.configure({
       multicolor: true,
     }),
-    CodeBlockLowlight.extend({
-      addNodeView() {
-        return VueNodeViewRenderer(CodeBlockComponent);
-      }
-    }).configure({
-      lowlight,
-    }),
+
     Image.configure({
       inline: true,
     }),
