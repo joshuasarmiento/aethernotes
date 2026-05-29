@@ -45,4 +45,24 @@ export const router = createRouter({
   routes,
 });
 
+/**
+ * Detect if the app is running as an installed PWA in standalone mode.
+ * Works on Chrome/Edge (display-mode: standalone) and iOS Safari (navigator.standalone).
+ */
+function isStandalone(): boolean {
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    ('standalone' in window.navigator && (window.navigator as { standalone?: boolean }).standalone === true)
+  );
+}
+
+// Public-facing pages that should redirect to the editor when running as PWA
+const webOnlyRoutes = new Set(['landing', 'docs']);
+
+router.beforeEach((to) => {
+  if (isStandalone() && to.name && webOnlyRoutes.has(to.name as string)) {
+    return { name: 'note-empty' };
+  }
+});
+
 export default router;

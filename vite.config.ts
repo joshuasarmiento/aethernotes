@@ -15,6 +15,8 @@ export default defineConfig({
         theme_color: '#FAFAF7',
         background_color: '#FAFAF7',
         display: 'standalone',
+        start_url: '/note',
+        scope: '/',
         icons: [
           {
             src: 'favicon.svg',
