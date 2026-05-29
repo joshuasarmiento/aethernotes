@@ -86,8 +86,7 @@
           <span class="italic-accent">fully yours.</span>
         </h1>
         <p class="hero-subtitle font-ui">
-          A private notes workspace built on AES-256-GCM encryption, Tiptap markdown, and IndexedDB — runs entirely in
-          your browser.
+          A beautifully minimal notes app that locks your data with secure, private encryption. No accounts, no trackers, and your notes never leave your device.
         </p>
         <div class="hero-ctas font-ui">
           <router-link to="/note" class="hero-btn primary">Launch Editor →</router-link>
@@ -210,10 +209,8 @@
                 <path d="M3 12A9 3 0 0 0 21 12" />
               </svg>
             </div>
-            <h3 class="feature-heading">Local-First Speed</h3>
-            <p class="feature-desc">All notes live in IndexedDB via Dexie.js. Instant load times, fully offline-capable,
-              and
-              your data never leaves your device.</p>
+            <h3 class="feature-heading">100% Private & Local</h3>
+            <p class="feature-desc">All your notes are stored directly on your device. They never upload to any server, meaning your private thoughts remain completely yours.</p>
           </div>
 
           <!-- Card 2: Markdown -->
@@ -228,10 +225,8 @@
                 <polyline points="10 9 9 9 8 9" />
               </svg>
             </div>
-            <h3 class="feature-heading">Markdown Shortcuts</h3>
-            <p class="feature-desc">ProseMirror input rules turn `#`, `-`, `[]` into rich headings, lists, and
-              checkboxes as
-              you type — no mode switching.</p>
+            <h3 class="feature-heading">Easy Formatting</h3>
+            <p class="feature-desc">Format your text instantly as you type. Headings, lists, bold text, and checkboxes are created automatically without clicking nested menus.</p>
           </div>
 
           <!-- Card 3: Command palette -->
@@ -243,9 +238,8 @@
                 <path d="m21 21-4.3-4.3" />
               </svg>
             </div>
-            <h3 class="feature-heading">Command Palette</h3>
-            <p class="feature-desc">Fuse.js fuzzy search powers a `Cmd+K` palette to switch notes, run commands, and
-              navigate your workspace in milliseconds.</p>
+            <h3 class="feature-heading">Instant Search</h3>
+            <p class="feature-desc">Press `Cmd+K` to search everything in a flash. Instantly jump between notes, look up tags, or run helper commands in milliseconds.</p>
           </div>
 
           <!-- Card 4: Nesting folders -->
@@ -256,10 +250,8 @@
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
               </svg>
             </div>
-            <h3 class="feature-heading">Nested Hierarchies</h3>
-            <p class="feature-desc">Drag-and-drop folders, custom label tags, and pinned favorites — organize notes the
-              way
-              your brain actually works.</p>
+            <h3 class="feature-heading">Organized Folders</h3>
+            <p class="feature-desc">Organize your thoughts with nested folders, tag highlights, and pinned favorites. Everything stays neat, tidy, and simple to navigate.</p>
           </div>
         </div>
       </div>
@@ -268,19 +260,17 @@
     <!-- Cryptographic Security Panel -->
     <section id="security" class="security-section">
       <div class="section-container">
-        <h2 class="section-title font-display">Zero-Knowledge Architecture</h2>
+        <h2 class="section-title font-display">How Your Privacy is Guaranteed</h2>
         <p class="security-subtitle font-ui">
-          How local cryptography keeps your notes unreadable to anyone but you.
+          Aether Notes is built on zero-knowledge privacy. We physically cannot read your notes.
         </p>
 
         <div class="crypto-flow font-ui">
           <!-- Flow 1 -->
           <div class="flow-step">
             <div class="flow-badge">1</div>
-            <h4 class="flow-title">Derivation Salt</h4>
-            <p class="flow-desc">Your passphrase is hashed through PBKDF2 with 100,000 iterations and a unique random
-              salt
-              stored locally.</p>
+            <h4 class="flow-title">Your Private Password</h4>
+            <p class="flow-desc">You choose a secure password. It is never sent to any server and stays only in your head.</p>
           </div>
           <div class="flow-connector" aria-hidden="true">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -292,10 +282,8 @@
           <!-- Flow 2 -->
           <div class="flow-step">
             <div class="flow-badge">2</div>
-            <h4 class="flow-title">AES-256-GCM Key</h4>
-            <p class="flow-desc">The Web Crypto API derives an encryption key that lives only in memory — never
-              serialized,
-              never written to disk.</p>
+            <h4 class="flow-title">Memory-Only Keys</h4>
+            <p class="flow-desc">Your browser uses your password to unlock your notes. The digital key exists only in your browser's active memory.</p>
           </div>
           <div class="flow-connector" aria-hidden="true">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -307,9 +295,8 @@
           <!-- Flow 3 -->
           <div class="flow-step">
             <div class="flow-badge">3</div>
-            <h4 class="flow-title">Encrypted Storage</h4>
-            <p class="flow-desc">Notes are ciphertext in IndexedDB. Without your passphrase, the database contains only
-              unreadable bytes.</p>
+            <h4 class="flow-title">Scrambled Storage</h4>
+            <p class="flow-desc">Notes are stored as scrambled, encrypted text on your device. Without your password, your database is just gibberish.</p>
           </div>
         </div>
       </div>
