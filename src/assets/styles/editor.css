@@ -8,6 +8,26 @@
   color: var(--text-primary);
 }
 
+/* Hide selection highlight when actively entering a link */
+.tiptap-editor.hide-selection ::selection,
+.tiptap-editor.hide-selection *::selection {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* Links style */
+.tiptap-editor a {
+  color: var(--notion-blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.tiptap-editor a:hover {
+  opacity: 0.8;
+}
+
 /* Editor base spacing */
 .tiptap-editor p {
   margin-bottom: 0.6em;

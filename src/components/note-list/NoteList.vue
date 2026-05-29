@@ -1,60 +1,46 @@
 <template>
   <div class="note-list-panel">
     <!-- List Toolbar -->
-    <NoteListToolbar
-      v-model:sort-by="sortBy"
-      :is-trash="isTrash"
-      @empty-trash="confirmEmptyTrash"
-    />
+    <NoteListToolbar v-model:sort-by="sortBy" :is-trash="isTrash" @empty-trash="confirmEmptyTrash" />
 
     <!-- Scrollable Note Cards -->
     <div class="notes-scroll-container">
       <div v-if="sortedNotes.length > 0" class="notes-items-grid">
-        <NoteListItem
-          v-for="note in sortedNotes"
-          :key="note.id"
-          :note="note"
-          :active="route.params.id === note.id"
-          @select="selectNote(note.id)"
-          @contextmenu="handleNoteContextMenu"
-        />
+        <NoteListItem v-for="note in sortedNotes" :key="note.id" :note="note" :active="route.params.id === note.id"
+          @select="selectNote(note.id)" @contextmenu="handleNoteContextMenu" />
       </div>
-      
+
       <!-- Empty States -->
-      <EmptyState
-        v-else
-        :title="emptyStateTitle"
-        :message="emptyStateMessage"
-      />
+      <EmptyState v-else :title="emptyStateTitle" :message="emptyStateMessage" />
     </div>
 
     <!-- Right-click Context Menu -->
-    <ContextMenu
-      :show="showMenu"
-      :x="menuX"
-      :y="menuY"
-      @close="showMenu = false"
-    >
+    <ContextMenu :show="showMenu" :x="menuX" :y="menuY" @close="showMenu = false">
       <template v-if="!isTrash">
         <button class="context-menu-item" @click="togglePin">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
             <line x1="12" x2="12" y1="17" y2="22" />
-            <path d="M5 17h14v-1.76a2 2 0 0 0-.44-1.24l-2.78-3.5A2 2 0 0 1 15 9.26V5a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4.26a2 2 0 0 1-.78 1.24l-2.78 3.5a2 2 0 0 0-.44 1.24Z" />
+            <path
+              d="M5 17h14v-1.76a2 2 0 0 0-.44-1.24l-2.78-3.5A2 2 0 0 1 15 9.26V5a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4.26a2 2 0 0 1-.78 1.24l-2.78 3.5a2 2 0 0 0-.44 1.24Z" />
           </svg>
           {{ selectedNote?.isPinned ? 'Unpin Note' : 'Pin Note' }}
         </button>
-        
+
         <button class="context-menu-item" @click="toggleFavorite">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
           </svg>
           {{ selectedNote?.isFavorite ? 'Unfavorite' : 'Favorite' }}
         </button>
-        
+
         <div class="context-menu-divider"></div>
 
         <button class="context-menu-item" @click="copyPageContent">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
           </svg>
@@ -62,18 +48,20 @@
         </button>
 
         <button class="context-menu-item" @click="exportAsMarkdown">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="7 10 12 15 17 10" />
             <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
-          Export (Markdown Format)
+          Export
         </button>
-        
+
         <div class="context-menu-divider"></div>
-        
+
         <button class="context-menu-item danger" @click="trashNote">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
             <path d="M3 6h18" />
             <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
             <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
@@ -84,7 +72,8 @@
 
       <template v-else>
         <button class="context-menu-item" @click="restoreNote">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
             <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
             <path d="M21 3v5h-5" />
             <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
@@ -92,11 +81,12 @@
           </svg>
           Restore Note
         </button>
-        
+
         <div class="context-menu-divider"></div>
-        
+
         <button class="context-menu-item danger" @click="confirmDeletePermanent">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
             <path d="M3 6h18" />
             <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
             <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
@@ -107,25 +97,28 @@
     </ContextMenu>
 
     <!-- Dialogs -->
-    <ConfirmDialog
-      :show="showEmptyTrashConfirm"
-      title="Empty Trash"
+    <ConfirmDialog :show="showEmptyTrashConfirm" title="Empty Trash"
       message="Are you sure you want to empty the trash? All notes in the trash will be permanently deleted. This action cannot be undone."
-      confirm-text="Empty"
-      is-danger
-      @confirm="handleEmptyTrash"
-      @cancel="showEmptyTrashConfirm = false"
-    />
+      confirm-text="Empty" is-danger @confirm="handleEmptyTrash" @cancel="showEmptyTrashConfirm = false" />
 
-    <ConfirmDialog
-      :show="showDeleteConfirm"
-      title="Delete Note"
+    <ConfirmDialog :show="showDeleteConfirm" title="Delete Note"
       message="Are you sure you want to permanently delete this note? This action cannot be undone."
-      confirm-text="Delete"
-      is-danger
-      @confirm="handleDeletePermanent"
-      @cancel="showDeleteConfirm = false"
-    />
+      confirm-text="Delete" is-danger @confirm="handleDeletePermanent" @cancel="showDeleteConfirm = false" />
+
+    <!-- Toast Notification -->
+    <Transition name="toast">
+      <div v-if="toast.show" :class="['toast-notification', toast.type]">
+        <svg v-if="toast.type === 'success'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="toast-icon">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="toast-icon">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        <span>{{ toast.message }}</span>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -157,13 +150,32 @@ const selectedNote = ref<Note | null>(null);
 const showEmptyTrashConfirm = ref(false);
 const showDeleteConfirm = ref(false);
 
+const toast = ref({
+  show: false,
+  message: '',
+  type: 'success' as 'success' | 'error'
+});
+let toastTimeout: any = null;
+
+function showToast(message: string, type: 'success' | 'error' = 'success') {
+  toast.value.message = message;
+  toast.value.type = type;
+  toast.value.show = true;
+  if (toastTimeout) {
+    clearTimeout(toastTimeout);
+  }
+  toastTimeout = setTimeout(() => {
+    toast.value.show = false;
+  }, 2500);
+}
+
 const isTrash = computed(() => route.name === 'trash');
 
 const filteredNotes = computed(() => {
   if (isTrash.value) {
     return notesStore.trashedNotes;
   }
-  
+
   let list = notesStore.activeNotes;
 
   // Filter by tag
@@ -174,13 +186,13 @@ const filteredNotes = computed(() => {
   else if (uiStore.activeFolderId) {
     list = list.filter(n => n.folder === uiStore.activeFolderId);
   }
-  
+
   return list;
 });
 
 const sortedNotes = computed(() => {
   const list = [...filteredNotes.value];
-  
+
   if (sortBy.value === 'updated') {
     // Sort pinned notes to the top first, then by date descending
     return list.sort((a, b) => {
@@ -285,40 +297,40 @@ async function copyPageContent() {
   if (!selectedNote.value) return;
 
   const note = selectedNote.value;
-  
+
   if (note.encryptedWith === 'vault' && !settingsStore.encryptionKey) {
-    alert('This note is encrypted. Please unlock your vault to copy its content.');
+    showToast('This note is encrypted. Please unlock your vault to copy its content.', 'error');
     return;
   }
 
   try {
     await navigator.clipboard.writeText(note.content);
-    alert('Note content copied to clipboard!');
+    showToast('Note content copied to clipboard!', 'success');
   } catch (err) {
     console.error('Failed to copy text:', err);
-    alert('Failed to copy content to clipboard.');
+    showToast('Failed to copy content to clipboard.', 'error');
   }
 }
 
 function exportAsMarkdown() {
   showMenu.value = false;
   if (!selectedNote.value) return;
-  
+
   const note = selectedNote.value;
-  
+
   if (note.encryptedWith === 'vault' && !settingsStore.encryptionKey) {
-    alert('This note is encrypted. Please unlock your vault to export it.');
+    showToast('This note is encrypted. Please unlock your vault to export it.', 'error');
     return;
   }
 
   const content = note.content;
   const title = note.title || 'untitled';
-  
+
   const filename = `${title.toLowerCase().replace(/[^a-z0-9_-]/g, '_')}.md`;
-  
+
   const blob = new Blob([content], { type: 'text/markdown;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
-  
+
   const link = document.createElement('a');
   link.href = url;
   link.setAttribute('download', filename);
@@ -348,5 +360,49 @@ function exportAsMarkdown() {
 .notes-items-grid {
   display: flex;
   flex-direction: column;
+}
+
+/* Toast Notification Styles */
+.toast-notification {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-primary);
+  color: var(--bg);
+  padding: 8px 16px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 1000;
+  font-size: 13px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.toast-icon {
+  flex-shrink: 0;
+}
+
+.toast-notification.success .toast-icon {
+  color: var(--notion-green);
+}
+
+.toast-notification.error .toast-icon {
+  color: var(--notion-red);
+}
+
+/* Toast Vue Transition */
+.toast-enter-active,
+.toast-leave-active {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+}
+
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translate(-50%, 16px);
 }
 </style>
