@@ -83,11 +83,12 @@
 <script setup lang="ts">
 import { ref, computed, watch, onBeforeUnmount, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
-import { useEditor, EditorContent } from '@tiptap/vue-3';
+import { useEditor, EditorContent, VueNodeViewRenderer } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Typography from '@tiptap/extension-typography';
-import Link from '@tiptap/extension-link';
+import { Color } from '@tiptap/extension-color';
+import { TextStyle } from '@tiptap/extension-text-style';
 import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
@@ -97,8 +98,6 @@ import TaskItem from '@tiptap/extension-task-item';
 import Highlight from '@tiptap/extension-highlight';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Image from '@tiptap/extension-image';
-import Dropcursor from '@tiptap/extension-dropcursor';
-import Gapcursor from '@tiptap/extension-gapcursor';
 import { Markdown } from 'tiptap-markdown';
 import { createLowlight, common } from 'lowlight';
 
@@ -115,6 +114,7 @@ import { deriveKey, hexToBuf } from '@/lib/crypto';
 
 // Subcomponents
 import EditorToolbar from './EditorToolbar.vue';
+import CodeBlockComponent from './CodeBlockComponent.vue';
 
 const route = useRoute();
 const notesStore = useNotesStore();
@@ -157,24 +157,26 @@ const editor = useEditor({
   extensions: [
     StarterKit.configure({
       codeBlock: false, // Override with CodeBlockLowlight
+      link: {
+        openOnClick: false,
+        HTMLAttributes: {
+          rel: 'noopener noreferrer',
+          target: '_blank',
+        },
+      },
     }),
     Placeholder.configure({
       placeholder: ({ node }) => {
         if (node.type.name === 'heading' && node.attrs.level === 1) {
           return 'Title';
         }
-        return `Start writing or '/' for command formatting menu`;
+        return `Start writing or type '/' for blocks...`;
       },
       emptyEditorClass: 'is-editor-empty',
     }),
     Typography,
-    Link.configure({
-      openOnClick: false,
-      HTMLAttributes: {
-        rel: 'noopener noreferrer',
-        target: '_blank',
-      },
-    }),
+    TextStyle,
+    Color,
     Table.configure({
       resizable: true,
     }),
@@ -191,14 +193,16 @@ const editor = useEditor({
     Highlight.configure({
       multicolor: true,
     }),
-    CodeBlockLowlight.configure({
+    CodeBlockLowlight.extend({
+      addNodeView() {
+        return VueNodeViewRenderer(CodeBlockComponent);
+      }
+    }).configure({
       lowlight,
     }),
     Image.configure({
       inline: true,
     }),
-    Dropcursor,
-    Gapcursor,
     Markdown.configure({
       html: true,
       tightLists: true,
@@ -403,15 +407,15 @@ function applyEditorPreferences() {
   const family = settingsStore.fontFamily;
   const size = settingsStore.fontSize;
 
-  const fontFamilyValue = 
+  const fontFamilyValue =
     family === 'sans' ? 'system-ui, -apple-system, sans-serif' :
-    family === 'mono' ? "'JetBrains Mono', monospace" :
-    "'Source Serif 4', Georgia, serif"; // default 'serif'
+      family === 'mono' ? "'JetBrains Mono', monospace" :
+        "'Source Serif 4', Georgia, serif"; // default 'serif'
 
-  const headingFontValue = 
+  const headingFontValue =
     family === 'sans' ? 'system-ui, -apple-system, sans-serif' :
-    family === 'mono' ? "'JetBrains Mono', monospace" :
-    "'Instrument Serif', Georgia, serif";
+      family === 'mono' ? "'JetBrains Mono', monospace" :
+        "'Instrument Serif', Georgia, serif";
 
   dom.style.setProperty('--editor-font-size', `${size}px`);
   dom.style.setProperty('--editor-font-family', fontFamilyValue);

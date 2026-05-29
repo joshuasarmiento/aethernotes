@@ -1,36 +1,30 @@
 <template>
-  <BubbleMenu
-    v-if="editor"
-    :editor="editor"
-    :tippy-options="{ duration: 150, interactive: true, placement: 'top' }"
-    :should-show="shouldShowMenu"
-    class="bubble-menu-wrapper font-ui"
-  >
+  <BubbleMenu v-if="editor" :editor="editor" :tippy-options="{ duration: 150, interactive: true, placement: 'top' }"
+    :should-show="shouldShowMenu" class="bubble-menu-wrapper font-ui">
+    <!-- Color Popover (Above the toolbar) -->
+    <div v-show="showColorMenu" class="color-popover">
+      <div class="color-options-title font-ui">Text Color</div>
+      <div class="color-picker-grid">
+        <button v-for="color in labelColors" :key="color.name" class="color-dot"
+          :style="{ backgroundColor: color.hex || 'var(--text-primary)' }" :title="color.name"
+          @mousedown.prevent.stop="applyColor(color.hex)"></button>
+      </div>
+    </div>
+
     <!-- Link Input Popover (Above the toolbar) -->
     <div v-show="showLinkInput" class="link-popover">
-      <input
-        ref="linkInputRef"
-        v-model="linkUrl"
-        type="text"
-        placeholder="Paste or type link..."
-        class="link-input"
-        @keydown.enter="submitLink"
-        @keydown.esc="cancelLink"
-        @keydown.stop
-        @keypress.stop
-        @keyup.stop
-        @paste.stop
-        @copy.stop
-        @cut.stop
-        @beforeinput.stop
-      />
+      <input ref="linkInputRef" v-model="linkUrl" type="text" placeholder="Paste or type link..." class="link-input"
+        @keydown.enter="submitLink" @keydown.esc="cancelLink" @keydown.stop @keypress.stop @keyup.stop @paste.stop
+        @copy.stop @cut.stop @beforeinput.stop />
       <button type="button" class="link-submit-btn" @click.prevent.stop="submitLink" title="Confirm Link">
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="20 6 9 17 4 12" />
         </svg>
       </button>
       <button type="button" class="link-cancel-btn" @click.prevent.stop="cancelLink" title="Cancel">
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" x2="6" y1="6" y2="18" />
           <line x1="6" x2="18" y1="6" y2="18" />
         </svg>
@@ -40,56 +34,40 @@
     <!-- Main Formatting Toolbar -->
     <div class="bubble-menu">
       <!-- Text Type Toggles -->
-      <button
-        :class="['menu-btn', { 'is-active': editor.isActive('paragraph') }]"
-        @click="formatBlock('paragraph')"
-        title="Paragraph"
-      >
+      <button :class="['menu-btn', { 'is-active': editor.isActive('paragraph') }]" @click="formatBlock('paragraph')"
+        title="Paragraph">
         <span class="btn-text">P</span>
       </button>
-      <button
-        :class="['menu-btn', { 'is-active': editor.isActive('heading', { level: 1 }) }]"
-        @click="formatBlock('h1')"
-        title="Heading 1"
-      >
+      <button :class="['menu-btn', { 'is-active': editor.isActive('heading', { level: 1 }) }]"
+        @click="formatBlock('h1')" title="Heading 1">
         <span class="btn-text">H1</span>
       </button>
-      <button
-        :class="['menu-btn', { 'is-active': editor.isActive('heading', { level: 2 }) }]"
-        @click="formatBlock('h2')"
-        title="Heading 2"
-      >
+      <button :class="['menu-btn', { 'is-active': editor.isActive('heading', { level: 2 }) }]"
+        @click="formatBlock('h2')" title="Heading 2">
         <span class="btn-text">H2</span>
       </button>
-      <button
-        :class="['menu-btn', { 'is-active': editor.isActive('heading', { level: 3 }) }]"
-        @click="formatBlock('h3')"
-        title="Heading 3"
-      >
+      <button :class="['menu-btn', { 'is-active': editor.isActive('heading', { level: 3 }) }]"
+        @click="formatBlock('h3')" title="Heading 3">
         <span class="btn-text">H3</span>
       </button>
 
       <div class="menu-divider"></div>
 
       <!-- Bold -->
-      <button
-        :class="['menu-btn', { 'is-active': editor.isActive('bold') }]"
-        @click="editor.chain().focus().toggleBold().run()"
-        title="Bold (Cmd+B)"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <button :class="['menu-btn', { 'is-active': editor.isActive('bold') }]"
+        @click="editor.chain().focus().toggleBold().run()" title="Bold (Cmd+B)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 12a4 4 0 0 0 0-8H6v8" />
           <path d="M15 20a4 4 0 0 0 0-8H6v8Z" />
         </svg>
       </button>
 
       <!-- Italic -->
-      <button
-        :class="['menu-btn', { 'is-active': editor.isActive('italic') }]"
-        @click="editor.chain().focus().toggleItalic().run()"
-        title="Italic (Cmd+I)"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <button :class="['menu-btn', { 'is-active': editor.isActive('italic') }]"
+        @click="editor.chain().focus().toggleItalic().run()" title="Italic (Cmd+I)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" x2="10" y1="4" y2="4" />
           <line x1="14" x2="5" y1="20" y2="20" />
           <line x1="15" x2="9" y1="4" y2="20" />
@@ -97,48 +75,62 @@
       </button>
 
       <!-- Strikethrough -->
-      <button
-        :class="['menu-btn', { 'is-active': editor.isActive('strike') }]"
-        @click="editor.chain().focus().toggleStrike().run()"
-        title="Strikethrough (Cmd+Shift+X)"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <button :class="['menu-btn', { 'is-active': editor.isActive('strike') }]"
+        @click="editor.chain().focus().toggleStrike().run()" title="Strikethrough (Cmd+Shift+X)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M16 4H9a3 3 0 0 0-2.83 4 4 4 0 0 0 3.71 3h7.24a4 4 0 0 1 3.71 3 3 3 0 0 1-2.83 4H7" />
           <line x1="4" x2="20" y1="12" y2="12" />
         </svg>
       </button>
 
       <!-- Inline Code -->
-      <button
-        :class="['menu-btn', { 'is-active': editor.isActive('code') }]"
-        @click="editor.chain().focus().toggleCode().run()"
-        title="Inline Code (Cmd+E)"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <button :class="['menu-btn', { 'is-active': editor.isActive('code') }]"
+        @click="editor.chain().focus().toggleCode().run()" title="Inline Code (Cmd+E)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="16 18 22 12 16 6" />
           <polyline points="8 6 2 12 8 18" />
         </svg>
       </button>
 
+      <!-- Code Block -->
+      <button :class="['menu-btn', { 'is-active': editor.isActive('codeBlock') }]"
+        @click="editor.chain().focus().toggleCodeBlock().run()" title="Code Block">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
+          <path d="M8 9h8" />
+          <path d="M8 13h6" />
+        </svg>
+      </button>
+
       <!-- Highlight -->
-      <button
-        :class="['menu-btn', { 'is-active': editor.isActive('highlight') }]"
-        @click="editor.chain().focus().toggleHighlight().run()"
-        title="Highlight (Cmd+Shift+H)"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m12 3-1.912 5.886a2 2 0 0 1-1.236 1.236L3 12l5.886 1.912a2 2 0 0 1 1.236 1.236L12 21l1.912-5.886a2 2 0 0 1 1.236-1.236L21 12l-5.886-1.912a2 2 0 0 1-1.236-1.236Z" />
+      <button :class="['menu-btn', { 'is-active': editor.isActive('highlight') }]"
+        @click="editor.chain().focus().toggleHighlight().run()" title="Highlight (Cmd+Shift+H)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path
+            d="m12 3-1.912 5.886a2 2 0 0 1-1.236 1.236L3 12l5.886 1.912a2 2 0 0 1 1.236 1.236L12 21l1.912-5.886a2 2 0 0 1 1.236-1.236L21 12l-5.886-1.912a2 2 0 0 1-1.236-1.236Z" />
+        </svg>
+      </button>
+
+      <!-- Text Color Button -->
+      <button type="button" :class="['menu-btn', { 'is-active': editor.isActive('textStyle') || showColorMenu }]"
+        @mousedown.prevent.stop="toggleColorMenu" title="Text Color">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 17L12 4l5 13" />
+          <path d="M9 13h6" />
+          <path d="M4 21h16" :style="{ stroke: currentColor ? currentColor : 'currentColor' }" stroke-width="4" />
         </svg>
       </button>
 
       <!-- Link Toggle -->
-      <button
-        type="button"
-        :class="['menu-btn', { 'is-active': editor.isActive('link') || showLinkInput }]"
-        @mousedown.prevent.stop="toggleLink"
-        title="Add Link"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <button type="button" :class="['menu-btn', { 'is-active': editor.isActive('link') || showLinkInput }]"
+        @mousedown.prevent.stop="toggleLink" title="Add Link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
         </svg>
@@ -148,7 +140,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { type Editor } from '@tiptap/vue-3';
 import { BubbleMenu } from '@tiptap/vue-3/menus';
 
@@ -160,6 +152,43 @@ const showLinkInput = ref(false);
 const linkUrl = ref('');
 const linkInputRef = ref<HTMLInputElement | null>(null);
 const savedRange = ref<{ from: number; to: number } | null>(null);
+const showColorMenu = ref(false);
+
+const labelColors = [
+  { name: 'Default', hex: null },
+  { name: 'Grey', hex: 'var(--notion-grey)' },
+  { name: 'Brown', hex: 'var(--notion-brown)' },
+  { name: 'Orange', hex: 'var(--notion-orange)' },
+  { name: 'Yellow', hex: 'var(--notion-yellow)' },
+  { name: 'Green', hex: 'var(--notion-green)' },
+  { name: 'Blue', hex: 'var(--notion-blue)' },
+  { name: 'Purple', hex: 'var(--notion-purple)' },
+  { name: 'Pink', hex: 'var(--notion-pink)' },
+  { name: 'Red', hex: 'var(--notion-red)' }
+];
+
+const currentColor = computed(() => {
+  if (!props.editor) return null;
+  return props.editor.getAttributes('textStyle').color || null;
+});
+
+function toggleColorMenu() {
+  if (showLinkInput.value) {
+    showLinkInput.value = false;
+    props.editor?.view.dom.classList.remove('hide-selection');
+  }
+  showColorMenu.value = !showColorMenu.value;
+}
+
+function applyColor(color: string | null) {
+  if (!props.editor) return;
+  if (color) {
+    props.editor.chain().focus().setColor(color).run();
+  } else {
+    props.editor.chain().focus().unsetColor().run();
+  }
+  showColorMenu.value = false;
+}
 
 const shouldShowMenu = ({ state, editor }: { state: any; editor: any }) => {
   if (!editor) return false;
@@ -181,6 +210,11 @@ const shouldShowMenu = ({ state, editor }: { state: any; editor: any }) => {
     } else {
       return true;
     }
+  }
+
+  // If the color menu is open, keep the bubble menu visible
+  if (showColorMenu.value) {
+    return true;
   }
 
   const show = (() => {
@@ -205,6 +239,7 @@ const shouldShowMenu = ({ state, editor }: { state: any; editor: any }) => {
 
   if (!show) {
     showLinkInput.value = false;
+    showColorMenu.value = false;
   }
   return show;
 };
@@ -254,7 +289,7 @@ function toggleLink() {
   linkUrl.value = previousUrl;
   showLinkInput.value = true;
   props.editor.view.dom.classList.add('hide-selection');
-  
+
   setTimeout(() => {
     if (linkInputRef.value) {
       linkInputRef.value.focus();
@@ -295,7 +330,7 @@ function cancelLink() {
     props.editor.view.dom.classList.remove('hide-selection');
   }
   linkUrl.value = '';
-  
+
   if (props.editor && savedRange.value) {
     props.editor.chain().focus().setTextSelection(savedRange.value).run();
   }
@@ -367,6 +402,45 @@ function cancelLink() {
   background: var(--border);
   align-self: center;
   margin: 0 4px;
+}
+
+.color-popover {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.color-options-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 6px 8px 2px;
+  letter-spacing: 0.5px;
+}
+
+.color-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  padding: 6px 8px 8px;
+}
+
+.color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.color-dot:hover {
+  transform: scale(1.2);
 }
 
 .link-input {
