@@ -1,8 +1,8 @@
 <template>
   <BubbleMenu v-if="editor" :editor="editor" :tippy-options="{ duration: 150, interactive: true, placement: 'top' }"
-    :should-show="shouldShowMenu" class="bubble-menu-wrapper font-ui">
+    :should-show="shouldShowMenu" class="bubble-menu-wrapper font-ui" @click.stop @mousedown.stop>
     <!-- Color Popover (Above the toolbar) -->
-    <div v-show="showColorMenu" class="color-popover">
+    <div v-show="showColorMenu" class="color-popover" @click.stop @mousedown.stop>
       <div class="color-options-title font-ui">Text Color</div>
       <div class="color-picker-grid">
         <button v-for="color in labelColors" :key="color.name" class="color-dot"
@@ -12,7 +12,7 @@
     </div>
 
     <!-- Link Input Popover (Above the toolbar) -->
-    <div v-show="showLinkInput" class="link-popover">
+    <div v-show="showLinkInput" class="link-popover" @click.stop @mousedown.stop>
       <input ref="linkInputRef" v-model="linkUrl" type="text" placeholder="Paste or type link..." class="link-input"
         @keydown.enter="submitLink" @keydown.esc="cancelLink" @keydown.stop @keypress.stop @keyup.stop @paste.stop
         @copy.stop @cut.stop @beforeinput.stop />
@@ -32,7 +32,7 @@
     </div>
 
     <!-- Main Formatting Toolbar -->
-    <div class="bubble-menu">
+    <div class="bubble-menu" @click.stop @mousedown.stop>
       <!-- Text Type Toggles -->
       <button :class="['menu-btn', { 'is-active': editor.isActive('paragraph') }]" @click="formatBlock('paragraph')"
         title="Paragraph">
@@ -55,7 +55,7 @@
 
       <!-- Bold -->
       <button :class="['menu-btn', { 'is-active': editor.isActive('bold') }]"
-        @click="editor.chain().focus().toggleBold().run()" title="Bold (Cmd+B)">
+        @click="deleteSlashThen(() => editor!.chain().focus().toggleBold().run())" title="Bold (Cmd+B)">
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 12a4 4 0 0 0 0-8H6v8" />
@@ -65,7 +65,7 @@
 
       <!-- Italic -->
       <button :class="['menu-btn', { 'is-active': editor.isActive('italic') }]"
-        @click="editor.chain().focus().toggleItalic().run()" title="Italic (Cmd+I)">
+        @click="deleteSlashThen(() => editor!.chain().focus().toggleItalic().run())" title="Italic (Cmd+I)">
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" x2="10" y1="4" y2="4" />
@@ -76,7 +76,7 @@
 
       <!-- Strikethrough -->
       <button :class="['menu-btn', { 'is-active': editor.isActive('strike') }]"
-        @click="editor.chain().focus().toggleStrike().run()" title="Strikethrough (Cmd+Shift+X)">
+        @click="deleteSlashThen(() => editor!.chain().focus().toggleStrike().run())" title="Strikethrough (Cmd+Shift+X)">
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M16 4H9a3 3 0 0 0-2.83 4 4 4 0 0 0 3.71 3h7.24a4 4 0 0 1 3.71 3 3 3 0 0 1-2.83 4H7" />
@@ -86,7 +86,7 @@
 
       <!-- Inline Code -->
       <button :class="['menu-btn', { 'is-active': editor.isActive('code') }]"
-        @click="editor.chain().focus().toggleCode().run()" title="Inline Code (Cmd+E)">
+        @click="deleteSlashThen(() => editor!.chain().focus().toggleCode().run())" title="Inline Code (Cmd+E)">
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="16 18 22 12 16 6" />
@@ -96,7 +96,7 @@
 
       <!-- Code Block -->
       <button :class="['menu-btn', { 'is-active': editor.isActive('codeBlock') }]"
-        @click="editor.chain().focus().toggleCodeBlock().run()" title="Code Block">
+        @click="deleteSlashThen(() => editor!.chain().focus().toggleCodeBlock().run())" title="Code Block">
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
@@ -107,7 +107,7 @@
 
       <!-- Highlight -->
       <button :class="['menu-btn', { 'is-active': editor.isActive('highlight') }]"
-        @click="editor.chain().focus().toggleHighlight().run()" title="Highlight (Cmd+Shift+H)">
+        @click="deleteSlashThen(() => editor!.chain().focus().toggleHighlight().run())" title="Highlight (Cmd+Shift+H)">
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path
@@ -126,8 +126,8 @@
         </svg>
       </button>
 
-      <!-- Link Toggle -->
-      <button type="button" :class="['menu-btn', { 'is-active': editor.isActive('link') || showLinkInput }]"
+      <!-- Link Toggle — only shown when text is selected, not in slash mode -->
+      <button v-if="!isSlashMode" type="button" :class="['menu-btn', { 'is-active': editor.isActive('link') || showLinkInput }]"
         @mousedown.prevent.stop="toggleLink" title="Add Link">
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -172,6 +172,20 @@ const currentColor = computed(() => {
   return props.editor.getAttributes('textStyle').color || null;
 });
 
+/**
+ * True when the bubble menu is open because the user typed '/' (no text selected).
+ * False when triggered by text selection or double-click.
+ * Used to hide the link button in slash-command mode.
+ */
+const isSlashMode = computed(() => {
+  if (!props.editor) return false;
+  const { selection } = props.editor.state;
+  if (!selection.empty) return false; // text is selected → not slash mode
+  const { $from } = selection;
+  const textBeforeCursor = $from.parent.textContent.slice(0, $from.parentOffset);
+  return textBeforeCursor.endsWith('/');
+});
+
 function toggleColorMenu() {
   if (showLinkInput.value) {
     showLinkInput.value = false;
@@ -182,12 +196,35 @@ function toggleColorMenu() {
 
 function applyColor(color: string | null) {
   if (!props.editor) return;
+  deleteSlashIfPresent();
   if (color) {
     props.editor.chain().focus().setColor(color).run();
   } else {
     props.editor.chain().focus().unsetColor().run();
   }
   showColorMenu.value = false;
+}
+
+/**
+ * Checks if the bubble menu was triggered by a trailing '/' and deletes it,
+ * then runs the given callback. Safe to call from any button action.
+ */
+function deleteSlashIfPresent(): boolean {
+  if (!props.editor) return false;
+  const { selection } = props.editor.state;
+  const { $from } = selection;
+  const textBeforeCursor = $from.parent.textContent.slice(0, $from.parentOffset);
+  if (textBeforeCursor.endsWith('/')) {
+    const pos = selection.from;
+    props.editor.chain().focus().deleteRange({ from: pos - 1, to: pos }).run();
+    return true;
+  }
+  return false;
+}
+
+function deleteSlashThen(action: () => void) {
+  deleteSlashIfPresent();
+  action();
 }
 
 const shouldShowMenu = ({ state, editor }: { state: any; editor: any }) => {
@@ -280,6 +317,9 @@ function toggleLink() {
     props.editor.view.dom.classList.remove('hide-selection');
     return;
   }
+
+  // Delete '/' if present before saving the selection
+  deleteSlashIfPresent();
 
   // Save the current selection range before editor blurs
   const { selection } = props.editor.state;
