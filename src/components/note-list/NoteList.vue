@@ -52,6 +52,25 @@
         </button>
         
         <div class="context-menu-divider"></div>
+
+        <button class="context-menu-item" @click="copyPageContent">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
+          Copy Page Content
+        </button>
+
+        <button class="context-menu-item" @click="exportAsMarkdown">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Export (Markdown Format)
+        </button>
+        
+        <div class="context-menu-divider"></div>
         
         <button class="context-menu-item danger" @click="trashNote">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -115,6 +134,7 @@ import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useNotesStore } from '@/stores/notes';
 import { useUiStore } from '@/stores/ui';
+import { useSettingsStore } from '@/stores/settings';
 import NoteListToolbar from './NoteListToolbar.vue';
 import NoteListItem from './NoteListItem.vue';
 import EmptyState from './EmptyState.vue';
@@ -126,6 +146,7 @@ const route = useRoute();
 const router = useRouter();
 const notesStore = useNotesStore();
 const uiStore = useUiStore();
+const settingsStore = useSettingsStore();
 
 const sortBy = ref<'updated' | 'title'>('updated');
 const showMenu = ref(false);
@@ -256,8 +277,55 @@ function confirmEmptyTrash() {
 }
 
 async function handleEmptyTrash() {
-  showEmptyTrashConfirm.value = false;
   await notesStore.emptyTrash();
+}
+
+async function copyPageContent() {
+  showMenu.value = false;
+  if (!selectedNote.value) return;
+
+  const note = selectedNote.value;
+  
+  if (note.encryptedWith === 'vault' && !settingsStore.encryptionKey) {
+    alert('This note is encrypted. Please unlock your vault to copy its content.');
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(note.content);
+    alert('Note content copied to clipboard!');
+  } catch (err) {
+    console.error('Failed to copy text:', err);
+    alert('Failed to copy content to clipboard.');
+  }
+}
+
+function exportAsMarkdown() {
+  showMenu.value = false;
+  if (!selectedNote.value) return;
+  
+  const note = selectedNote.value;
+  
+  if (note.encryptedWith === 'vault' && !settingsStore.encryptionKey) {
+    alert('This note is encrypted. Please unlock your vault to export it.');
+    return;
+  }
+
+  const content = note.content;
+  const title = note.title || 'untitled';
+  
+  const filename = `${title.toLowerCase().replace(/[^a-z0-9_-]/g, '_')}.md`;
+  
+  const blob = new Blob([content], { type: 'text/markdown;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 </script>
 
