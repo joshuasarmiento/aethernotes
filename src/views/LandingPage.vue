@@ -3,7 +3,7 @@
     <!-- Header Navigation -->
     <header class="header font-ui">
       <div class="header-container">
-        <div class="logo">
+        <router-link to="/" class="logo">
           <svg class="logo-icon" width="16" height="24" viewBox="0 0 333 510" fill="none"
             xmlns="http://www.w3.org/2000/svg">
             <path
@@ -11,13 +11,9 @@
               fill="currentColor" />
           </svg>
           <span class="logo-text font-display">Aether <span class="logo-notes font-ui">Notes</span></span>
-        </div>
-        <nav class="nav-links">
-          <a href="#features">Features</a>
-          <a href="#security">Security</a>
-          <router-link to="/docs">Docs</router-link>
-          <a href="https://github.com/joshuasarmiento/aethernotes" target="_blank" rel="noopener">GitHub</a>
+        </router-link>
 
+        <div class="header-right">
           <!-- Theme toggle -->
           <button class="theme-toggle" @click="cycleTheme"
             :aria-label="`Switch theme (current: ${settingsStore.theme})`">
@@ -44,10 +40,42 @@
             </svg>
           </button>
 
-          <router-link to="/note" class="cta-btn">Launch App →</router-link>
-        </nav>
+          <nav class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#security">Security</a>
+            <router-link to="/docs">Docs</router-link>
+            <a href="https://github.com/joshuasarmiento/aethernotes" target="_blank" rel="noopener">GitHub</a>
+            <router-link to="/note" class="cta-btn">Launch App →</router-link>
+          </nav>
+
+          <!-- Mobile Menu Button -->
+          <button class="menu-toggle" @click="toggleMobileMenu" :aria-expanded="mobileMenuOpen" aria-label="Toggle menu">
+            <svg v-if="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" x2="20" y1="12" y2="12" />
+              <line x1="4" x2="20" y1="6" y2="6" />
+              <line x1="4" x2="20" y1="18" y2="18" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" x2="6" y1="6" y2="18" />
+              <line x1="6" x2="18" y1="6" y2="18" />
+            </svg>
+          </button>
+        </div>
       </div>
     </header>
+
+    <!-- Mobile Drawer Overlay -->
+    <Transition name="slide-down">
+      <div v-if="mobileMenuOpen" class="mobile-drawer font-ui">
+        <nav class="mobile-nav">
+          <a href="#features" @click="mobileMenuOpen = false">Features</a>
+          <a href="#security" @click="mobileMenuOpen = false">Security</a>
+          <router-link to="/docs" @click="mobileMenuOpen = false">Docs</router-link>
+          <a href="https://github.com/joshuasarmiento/aethernotes" target="_blank" rel="noopener" @click="mobileMenuOpen = false">GitHub</a>
+          <router-link to="/note" class="mobile-cta-btn" @click="mobileMenuOpen = false">Launch App →</router-link>
+        </nav>
+      </div>
+    </Transition>
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -256,6 +284,11 @@ import { useTheme } from '@/composables/useTheme';
 const settingsStore = useSettingsStore();
 useTheme();
 
+const mobileMenuOpen = ref(false);
+function toggleMobileMenu() {
+  mobileMenuOpen.value = !mobileMenuOpen.value;
+}
+
 function cycleTheme() {
   const themes: ('light' | 'dark' | 'system')[] = ['light', 'dark', 'system'];
   const nextIdx = (themes.indexOf(settingsStore.theme) + 1) % themes.length;
@@ -389,7 +422,6 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   height: var(--topbar-height);
-  /* Use a solid color with opacity trick — rgba doesn't work with hex CSS vars */
   background-color: var(--bg);
   opacity: 0.97;
   border-bottom: 1px solid var(--border-subtle);
@@ -405,7 +437,13 @@ onUnmounted(() => {
   max-width: 1080px;
   height: 100%;
   margin: 0 auto;
-  padding: 0 var(--space-lg);
+  padding: 0 var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .header-container {
+    padding: 0 var(--space-lg);
+  }
 }
 
 .logo {
@@ -437,10 +475,22 @@ onUnmounted(() => {
   font-family: 'DM Mono', monospace;
 }
 
-.nav-links {
+.header-right {
   display: flex;
   align-items: center;
-  gap: var(--space-lg);
+  gap: var(--space-md);
+}
+
+.nav-links {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+  }
 }
 
 .nav-links a {
@@ -479,6 +529,27 @@ onUnmounted(() => {
   border-color: var(--border);
 }
 
+/* Hamburger toggle */
+.menu-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+}
+
+@media (min-width: 768px) {
+  .menu-toggle {
+    display: none;
+  }
+}
+
 .cta-btn {
   background: var(--text-primary) !important;
   color: var(--bg) !important;
@@ -490,21 +561,94 @@ onUnmounted(() => {
 }
 
 .cta-btn:hover {
-  opacity: 0.8 !important;
+  opacity: 0.85 !important;
   color: var(--bg) !important;
+}
+
+/* ── Mobile Drawer ── */
+.mobile-drawer {
+  position: fixed;
+  top: var(--topbar-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-xl) var(--space-lg);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.mobile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.mobile-nav a {
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-size: 18px;
+  font-weight: 500;
+  padding: var(--space-xs) 0;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.mobile-nav a:hover {
+  color: var(--text-primary);
+}
+
+.mobile-cta-btn {
+  text-align: center;
+  background: var(--text-primary);
+  color: var(--bg) !important;
+  padding: var(--space-md);
+  border-radius: var(--radius);
+  font-size: 16px !important;
+  font-weight: 600;
+  margin-top: var(--space-lg);
+  border-bottom: none !important;
+}
+
+/* slide-down transition */
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: transform var(--duration-base) var(--ease-out),
+              opacity var(--duration-base) var(--ease-out);
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+  transform: translateY(-20px);
+  opacity: 0;
 }
 
 /* ── Hero ── */
 .hero-section {
-  padding-top: calc(var(--topbar-height) + 80px);
-  padding-bottom: 80px;
+  padding-top: calc(var(--topbar-height) + 40px);
+  padding-bottom: 48px;
   text-align: center;
+}
+
+@media (min-width: 768px) {
+  .hero-section {
+    padding-top: calc(var(--topbar-height) + 80px);
+    padding-bottom: 80px;
+  }
 }
 
 .hero-container {
   max-width: 760px;
   margin: 0 auto;
-  padding: 0 var(--space-lg);
+  padding: 0 var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .hero-container {
+    padding: 0 var(--space-lg);
+  }
 }
 
 .hero-badge {
@@ -515,16 +659,30 @@ onUnmounted(() => {
   border: 1px solid var(--border);
   border-radius: 99px;
   padding: 4px 12px;
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
   text-transform: uppercase;
 }
 
+@media (min-width: 768px) {
+  .hero-badge {
+    margin-bottom: var(--space-lg);
+  }
+}
+
 .hero-title {
-  font-size: clamp(42px, 8vw, 72px);
-  line-height: 1.05;
-  letter-spacing: -1.5px;
+  font-size: 36px;
+  line-height: 1.1;
+  letter-spacing: -1px;
   margin-bottom: var(--space-md);
   font-weight: normal;
+}
+
+@media (min-width: 768px) {
+  .hero-title {
+    font-size: clamp(42px, 8vw, 72px);
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+  }
 }
 
 .italic-accent {
@@ -537,27 +695,54 @@ onUnmounted(() => {
   font-size: 13px;
   color: var(--text-secondary);
   line-height: 1.7;
-  margin-bottom: var(--space-lg);
-  max-width: 460px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-bottom: var(--space-md);
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .hero-subtitle {
+    margin-bottom: var(--space-lg);
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .hero-ctas {
   display: flex;
-  justify-content: center;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-2xl);
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-xl);
+  align-items: stretch;
+}
+
+@media (min-width: 768px) {
+  .hero-ctas {
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-2xl);
+    align-items: center;
+  }
 }
 
 .hero-btn {
   text-decoration: none;
-  padding: 9px 20px;
-  font-size: 12px;
+  padding: 12px 20px;
+  font-size: 13px;
   border-radius: var(--radius);
   font-weight: 500;
   transition: all var(--duration-fast) var(--ease-out);
   letter-spacing: 0.2px;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .hero-btn {
+    padding: 9px 20px;
+    font-size: 12px;
+    text-align: left;
+  }
 }
 
 .hero-btn.primary {
@@ -586,8 +771,15 @@ onUnmounted(() => {
   overflow: hidden;
   background: var(--bg-elevated);
   text-align: left;
-  max-width: 580px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .editor-mockup {
+    max-width: 580px;
+  }
 }
 
 .mockup-header {
@@ -632,9 +824,16 @@ onUnmounted(() => {
 }
 
 .mockup-body {
-  padding: var(--space-lg);
-  min-height: 220px;
+  padding: var(--space-md);
+  min-height: 200px;
   position: relative;
+}
+
+@media (min-width: 768px) {
+  .mockup-body {
+    padding: var(--space-lg);
+    min-height: 220px;
+  }
 }
 
 .simulated-editor {
@@ -645,7 +844,7 @@ onUnmounted(() => {
 
 .sim-h1 {
   font-family: 'Instrument Serif', Georgia, serif;
-  font-size: 22px;
+  font-size: 20px;
   color: var(--text-primary);
   display: flex;
   align-items: center;
@@ -653,9 +852,15 @@ onUnmounted(() => {
   min-height: 1.4em;
 }
 
+@media (min-width: 768px) {
+  .sim-h1 {
+    font-size: 22px;
+  }
+}
+
 .sim-h2 {
   font-family: 'Instrument Serif', Georgia, serif;
-  font-size: 17px;
+  font-size: 16px;
   color: var(--text-primary);
   font-weight: 600;
   margin-top: var(--space-xs);
@@ -665,12 +870,24 @@ onUnmounted(() => {
   min-height: 1.4em;
 }
 
+@media (min-width: 768px) {
+  .sim-h2 {
+    font-size: 17px;
+  }
+}
+
 .sim-p {
   font-family: 'DM Mono', monospace;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-secondary);
   line-height: 1.6;
   min-height: 1.6em;
+}
+
+@media (min-width: 768px) {
+  .sim-p {
+    font-size: 12px;
+  }
 }
 
 .sim-p.placeholder {
@@ -713,8 +930,8 @@ onUnmounted(() => {
 /* Slash menu */
 .simulated-slash-menu {
   position: absolute;
-  left: var(--space-lg);
-  top: 120px;
+  left: var(--space-md);
+  top: 100px;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -722,6 +939,13 @@ onUnmounted(() => {
   width: 148px;
   padding: var(--space-xs) 0;
   z-index: 10;
+}
+
+@media (min-width: 768px) {
+  .simulated-slash-menu {
+    left: var(--space-lg);
+    top: 120px;
+  }
 }
 
 .slash-header {
@@ -746,23 +970,42 @@ onUnmounted(() => {
 
 /* ── Features Grid ── */
 .features-section {
-  padding: 96px 0;
+  padding: 48px 0;
   border-top: 1px solid var(--border-subtle);
   background: var(--bg-sunken);
+}
+
+@media (min-width: 768px) {
+  .features-section {
+    padding: 96px 0;
+  }
 }
 
 .section-container {
   max-width: 1040px;
   margin: 0 auto;
-  padding: 0 var(--space-lg);
+  padding: 0 var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .section-container {
+    padding: 0 var(--space-lg);
+  }
 }
 
 .section-title {
-  font-size: clamp(28px, 4vw, 38px);
+  font-size: 24px;
   text-align: center;
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-xl);
   font-weight: normal;
   letter-spacing: -0.5px;
+}
+
+@media (min-width: 768px) {
+  .section-title {
+    font-size: clamp(28px, 4vw, 38px);
+    margin-bottom: var(--space-2xl);
+  }
 }
 
 .features-grid {
@@ -812,8 +1055,14 @@ onUnmounted(() => {
 
 /* ── Security Section ── */
 .security-section {
-  padding: 96px 0;
+  padding: 48px 0;
   border-top: 1px solid var(--border-subtle);
+}
+
+@media (min-width: 768px) {
+  .security-section {
+    padding: 96px 0;
+  }
 }
 
 .security-subtitle {
@@ -821,8 +1070,14 @@ onUnmounted(() => {
   color: var(--text-secondary);
   text-align: center;
   margin-top: calc(-1 * var(--space-md));
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-xl);
   line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+  .security-subtitle {
+    margin-bottom: var(--space-2xl);
+  }
 }
 
 .crypto-flow {
@@ -846,6 +1101,7 @@ onUnmounted(() => {
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
   text-align: center;
+  width: 100%;
 }
 
 .flow-badge {
@@ -894,24 +1150,42 @@ onUnmounted(() => {
 
 /* ── Footer ── */
 .footer {
-  padding: 96px 0 64px;
+  padding: 48px 0 32px;
   background: var(--bg-sunken);
   border-top: 1px solid var(--border-subtle);
   text-align: center;
   margin-top: auto;
 }
 
+@media (min-width: 768px) {
+  .footer {
+    padding: 96px 0 64px;
+  }
+}
+
 .footer-container {
   max-width: 480px;
   margin: 0 auto;
-  padding: 0 var(--space-lg);
+  padding: 0 var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .footer-container {
+    padding: 0 var(--space-lg);
+  }
 }
 
 .footer-title {
-  font-size: 36px;
+  font-size: 28px;
   font-weight: normal;
   margin-bottom: var(--space-xs);
   letter-spacing: -0.5px;
+}
+
+@media (min-width: 768px) {
+  .footer-title {
+    font-size: 36px;
+  }
 }
 
 .footer-subtitle {
@@ -932,6 +1206,13 @@ onUnmounted(() => {
   font-weight: 500;
   margin-bottom: var(--space-2xl);
   transition: opacity var(--duration-fast) var(--ease-out);
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .footer-btn {
+    width: auto;
+  }
 }
 
 .footer-btn:hover {
@@ -944,6 +1225,7 @@ onUnmounted(() => {
   justify-content: center;
   gap: var(--space-sm);
   margin-bottom: var(--space-md);
+  flex-wrap: wrap;
 }
 
 .footer-links a {
@@ -966,6 +1248,7 @@ onUnmounted(() => {
   font-size: 10px;
   color: var(--text-muted);
   letter-spacing: 0.2px;
+  line-height: 1.4;
 }
 
 /* ── Transition ── */
