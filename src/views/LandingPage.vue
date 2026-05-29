@@ -119,14 +119,74 @@
                 <span v-if="idx === activeLineIdx" class="simulated-cursor"></span>
               </div>
 
-              <!-- Slash Commands mock menu -->
+              <!-- Simulated Bubble Menu Mockup -->
               <Transition name="fade">
-                <div v-if="showSlashMenu" class="simulated-slash-menu font-ui">
-                  <div class="slash-header">Blocks</div>
-                  <div class="slash-item active">H1 Heading</div>
-                  <div class="slash-item">H2 Heading</div>
-                  <div class="slash-item">H3 Heading</div>
-                  <div class="slash-item">Task List</div>
+                <div v-if="showSlashMenu" class="simulated-bubble-menu-wrapper font-ui">
+                  <div class="simulated-bubble-menu">
+                    <!-- Text Type Toggles -->
+                    <div class="sim-menu-btn"><span class="btn-text">P</span></div>
+                    <div class="sim-menu-btn"><span class="btn-text">H1</span></div>
+                    <div class="sim-menu-btn active"><span class="btn-text">H2</span></div>
+                    <div class="sim-menu-btn"><span class="btn-text">H3</span></div>
+
+                    <div class="sim-menu-divider"></div>
+
+                    <!-- Bold -->
+                    <div class="sim-menu-btn">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 12a4 4 0 0 0 0-8H6v8" />
+                        <path d="M15 20a4 4 0 0 0 0-8H6v8Z" />
+                      </svg>
+                    </div>
+
+                    <!-- Italic -->
+                    <div class="sim-menu-btn">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" x2="10" y1="4" y2="4" />
+                        <line x1="14" x2="5" y1="20" y2="20" />
+                        <line x1="15" x2="9" y1="4" y2="20" />
+                      </svg>
+                    </div>
+
+                    <!-- Strikethrough -->
+                    <div class="sim-menu-btn">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 4H9a3 3 0 0 0-2.83 4 4 4 0 0 0 3.71 3h7.24a4 4 0 0 1 3.71 3 3 3 0 0 1-2.83 4H7" />
+                        <line x1="4" x2="20" y1="12" y2="12" />
+                      </svg>
+                    </div>
+
+                    <!-- Inline Code -->
+                    <div class="sim-menu-btn">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6" />
+                        <polyline points="8 6 2 12 8 18" />
+                      </svg>
+                    </div>
+
+                    <!-- Highlight -->
+                    <div class="sim-menu-btn">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                          d="m12 3-1.912 5.886a2 2 0 0 1-1.236 1.236L3 12l5.886 1.912a2 2 0 0 1 1.236 1.236L12 21l1.912-5.886a2 2 0 0 1 1.236-1.236L21 12l-5.886-1.912a2 2 0 0 1-1.236-1.236Z" />
+                      </svg>
+                    </div>
+
+                    <!-- Text Color Button -->
+                    <div class="sim-menu-btn">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 17L12 4l5 13" />
+                        <path d="M9 13h6" />
+                        <path d="M4 21h16" stroke-width="4" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
               </Transition>
             </div>
@@ -927,45 +987,60 @@ onUnmounted(() => {
   }
 }
 
-/* Slash menu */
-.simulated-slash-menu {
+/* Simulated Bubble Menu */
+.simulated-bubble-menu-wrapper {
   position: absolute;
   left: var(--space-md);
-  top: 100px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-md);
-  width: 148px;
-  padding: var(--space-xs) 0;
+  top: 55px;
   z-index: 10;
 }
 
 @media (min-width: 768px) {
-  .simulated-slash-menu {
+  .simulated-bubble-menu-wrapper {
     left: var(--space-lg);
-    top: 120px;
+    top: 65px;
   }
 }
 
-.slash-header {
-  font-size: 9px;
-  text-transform: uppercase;
+.simulated-bubble-menu {
+  display: flex;
+  align-items: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  padding: 3px;
+  gap: 2px;
+}
+
+.sim-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
   color: var(--text-secondary);
-  padding: 4px var(--space-sm) 2px;
-  font-weight: bold;
-  letter-spacing: 0.5px;
+  transition: all var(--duration-fast) var(--ease-out);
 }
 
-.slash-item {
-  font-size: 11px;
-  padding: 5px var(--space-sm);
-  color: var(--text-primary);
-}
-
-.slash-item.active {
+.sim-menu-btn.active {
   background: var(--accent-subtle);
   color: var(--accent);
+}
+
+.btn-text {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.sim-menu-divider {
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+  align-self: center;
+  margin: 0 4px;
 }
 
 /* ── Features Grid ── */
