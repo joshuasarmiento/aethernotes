@@ -8,6 +8,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/LandingPage.vue'),
   },
   {
+    path: '/docs',
+    name: 'docs',
+    component: () => import('@/views/DocsPage.vue'),
+  },
+  {
     path: '/',
     component: AppShell,
     children: [
