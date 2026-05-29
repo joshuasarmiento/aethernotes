@@ -8,6 +8,7 @@ export const useUiStore = defineStore('ui', () => {
   const isOutlineOpen = ref<boolean>(true);
   const activeFolderId = ref<string | null>(null);
   const activeTag = ref<string | null>(null);
+  const isDocsOpen = ref<boolean>(false);
   
   // Editor status
   const wordCount = ref<number>(0);
@@ -65,6 +66,7 @@ export const useUiStore = defineStore('ui', () => {
     isOutlineOpen,
     activeFolderId,
     activeTag,
+    isDocsOpen,
     wordCount,
     charCount,
     saveStatus,

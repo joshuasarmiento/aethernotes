@@ -59,6 +59,17 @@
       <TagList />
     </div>
 
+    <!-- Docs Dialog Button -->
+    <div class="sidebar-docs font-ui">
+      <button class="docs-btn" @click="uiStore.isDocsOpen = true" title="Show Documentation">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+        </svg>
+        <span>Documentation</span>
+      </button>
+    </div>
+
     <!-- Sidebar Footer Workspace / Status Panel -->
     <div class="sidebar-footer font-ui">
       <div class="workspace-info" @click="router.push('/settings')">
@@ -286,6 +297,41 @@ function selectNote(noteId: string) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Sidebar Docs Section */
+.sidebar-docs {
+  padding: var(--space-xs) var(--space-sm);
+  border-top: 1px solid var(--border-subtle);
+  background: var(--sidebar-bg);
+  flex-shrink: 0;
+}
+
+.docs-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 32px;
+  padding: 0 var(--space-sm);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  gap: var(--space-sm);
+  transition: all var(--duration-fast) var(--ease-out);
+  text-align: left;
+  background: transparent;
+  border: none;
+}
+
+.docs-btn:hover {
+  background: var(--sidebar-hover);
+  color: var(--text-primary);
+}
+
+.docs-btn svg {
+  flex-shrink: 0;
+  opacity: 0.7;
 }
 
 /* Workspace Footer Styling */

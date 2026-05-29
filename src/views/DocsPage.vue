@@ -77,10 +77,9 @@
         <!-- Introduction -->
         <section id="introduction" class="doc-section">
           <h1 class="doc-h1 font-display">Introduction</h1>
-          <p class="doc-p">Aether Notes is a completely private note-taking workspace that runs entirely inside your web browser. There are no accounts to create, no servers to store your data, and no third-party tracking. Your notes stay on your own device, secured by a password that only you know.</p>
-          <p class="doc-p">It is designed to give you the speed and feel of a desktop application combined with absolute privacy. You can write, organize, and secure your thoughts without ever worrying about who has access to them.</p>
+          <p class="doc-p">Aether Notes is a local-first, zero-knowledge notes workspace running entirely in the browser. Built using Vue 3, Tiptap/ProseMirror core, Pinia, and Dexie.js (IndexedDB), it features zero-knowledge client-side encryption via the Web Crypto API.</p>
           <div class="doc-callout info">
-            <strong>Offline First:</strong> Once you install Aether Notes as an app on your phone or computer, it works completely offline without any internet connection.
+            <strong>Offline Support:</strong> Fully cached via service worker PWA, allowing complete offline functionality.
           </div>
         </section>
 
@@ -89,13 +88,10 @@
         <!-- Getting Started -->
         <section id="getting-started" class="doc-section">
           <h2 class="doc-h2 font-display">Getting Started</h2>
-          <p class="doc-p">Aether Notes can be used directly on the web or installed on your device as an app.</p>
-
-          <h3 id="use-web" class="doc-h3">Use in the Browser</h3>
-          <p class="doc-p">Simply visit our website and click <strong>Launch Editor</strong>. No sign-up or email is required. The app will immediately guide you to set up a private password for your vault.</p>
-
-          <h3 id="first-launch" class="doc-h3">Your First Password</h3>
-          <p class="doc-p">On your very first launch, you will create a password (or passphrase). This password is used to encrypt and lock your notes database. <strong>Important: Keep your password safe. We do not have servers, which means there is no "Reset Password" button. If you forget your password, your notes cannot be recovered.</strong></p>
+          <p class="doc-p">Simply open Aether Notes on the web and configure your private password (or passphrase) when prompted. This passphrase derives the local key to encrypt and lock your notes database.</p>
+          <div class="doc-callout warning">
+            <strong>Password Loss = Data Loss:</strong> We do not have servers, meaning there is no recovery option. Write your passphrase down and store it safely.
+          </div>
         </section>
 
         <hr class="doc-divider" />
@@ -103,81 +99,26 @@
         <!-- Editor -->
         <section id="editor" class="doc-section">
           <h2 class="doc-h2 font-display">Editor & Formatting</h2>
-          <p class="doc-p">The editor is designed to let you write quickly and format text on the fly. You can format text as you type using standard keyboard keys, or by highlighting text to show the formatting bar.</p>
-
-          <h3 id="slash-commands" class="doc-h3">The Slash Menu (/)</h3>
-          <p class="doc-p">Type a forward slash <code class="inline-code">/</code> at the end of any line to instantly display the formatting bar directly above your cursor. You can then quickly choose a style:</p>
+          <p class="doc-p">Powered by Tiptap (ProseMirror core), the editor parses markdown input rules as you type or through the floating bubble menu.</p>
+          <p class="doc-p"><strong>Slash commands:</strong> Type <code class="inline-code">/</code> at the end of any line to trigger formatting toggles (Paragraph, H1, H2, H3).</p>
+          
           <table class="doc-table">
             <thead>
               <tr>
-                <th>Formatting Style</th>
-                <th>Result</th>
+                <th>Syntax</th>
+                <th>Format</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td><strong>Paragraph</strong> (P)</td>
-                <td>Normal writing text</td>
-              </tr>
-              <tr>
-                <td><strong>Heading 1</strong> (H1)</td>
-                <td>Large document title heading</td>
-              </tr>
-              <tr>
-                <td><strong>Heading 2</strong> (H2)</td>
-                <td>Medium section heading</td>
-              </tr>
-              <tr>
-                <td><strong>Heading 3</strong> (H3)</td>
-                <td>Small subsection heading</td>
-              </tr>
+              <tr><td><code class="inline-code">**bold**</code></td><td>Bold text</td></tr>
+              <tr><td><code class="inline-code">_italic_</code></td><td>Italic text</td></tr>
+              <tr><td><code class="inline-code">~~strike~~</code></td><td>Strikethrough</td></tr>
+              <tr><td><code class="inline-code">`code`</code></td><td>Inline code</td></tr>
+              <tr><td><code class="inline-code">==highlight==</code></td><td>Highlight mark</td></tr>
             </tbody>
           </table>
 
-          <h3 id="inline-formatting" class="doc-h3">Formatting Shortcuts</h3>
-          <p class="doc-p">You can also format text while typing by surrounding words with simple formatting symbols:</p>
-          <table class="doc-table">
-            <thead>
-              <tr>
-                <th>Surround text with...</th>
-                <th>Result</th>
-                <th>Example</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code class="inline-code">**bold**</code></td>
-                <td>Bold text</td>
-                <td><strong>bold</strong></td>
-              </tr>
-              <tr>
-                <td><code class="inline-code">_italic_</code></td>
-                <td>Italic text</td>
-                <td><em>italic</em></td>
-              </tr>
-              <tr>
-                <td><code class="inline-code">~~strike~~</code></td>
-                <td>Crossed-out text</td>
-                <td><del>strike</del></td>
-              </tr>
-              <tr>
-                <td><code class="inline-code">`code`</code></td>
-                <td>Inline code block</td>
-                <td><code class="inline-code">code</code></td>
-              </tr>
-              <tr>
-                <td><code class="inline-code">==highlight==</code></td>
-                <td>Highlighted text</td>
-                <td><mark>highlight</mark></td>
-              </tr>
-            </tbody>
-          </table>
-
-          <h3 id="tags" class="doc-h3">Labels & Tags (@tag)</h3>
-          <p class="doc-p">Any word you prefix with an <code class="inline-code">@</code> symbol (like <code class="inline-code">@ideas</code> or <code class="inline-code">@todo</code>) will automatically turn into a tag. Tags are highlighted in your text and cataloged in the sidebar. Clicking any tag in the sidebar will instantly scroll your document to where that tag is located.</p>
-
-          <h3 id="outline" class="doc-h3">Document Outline</h3>
-          <p class="doc-p">A collapsible panel on the right lists all the headings in your current note. Clicking any heading in the list will instantly jump your cursor to that section of your note.</p>
+          <p class="doc-p"><strong>Inline Tags:</strong> Prefix any keyword with an <code class="inline-code">@</code> symbol (e.g. <code class="inline-code">@idea</code>) to tag your text. Tags are indexed in the sidebar for quick scroll-anchoring.</p>
         </section>
 
         <hr class="doc-divider" />
@@ -185,9 +126,6 @@
         <!-- Keyboard Shortcuts -->
         <section id="shortcuts" class="doc-section">
           <h2 class="doc-h2 font-display">Keyboard Shortcuts</h2>
-          <p class="doc-p">Use these quick keyboard combinations to speed up your note-taking:</p>
-
-          <h3 id="global-shortcuts" class="doc-h3">App Shortcuts</h3>
           <table class="doc-table">
             <thead>
               <tr>
@@ -196,68 +134,23 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td><kbd>Cmd/Ctrl + K</kbd></td>
-                <td>Open Search / Command Palette</td>
-              </tr>
-              <tr>
-                <td><kbd>Cmd/Ctrl + N</kbd></td>
-                <td>Create a new note</td>
-              </tr>
-              <tr>
-                <td><kbd>Cmd/Ctrl + \</kbd></td>
-                <td>Show / hide sidebar</td>
-              </tr>
-              <tr>
-                <td><kbd>Escape</kbd></td>
-                <td>Close search popups, menus or dialogs</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <h3 id="editor-shortcuts" class="doc-h3">Text Formatting Shortcuts</h3>
-          <table class="doc-table">
-            <thead>
-              <tr>
-                <th>Shortcut</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><kbd>Cmd/Ctrl + B</kbd></td>
-                <td>Make text bold</td>
-              </tr>
-              <tr>
-                <td><kbd>Cmd/Ctrl + I</kbd></td>
-                <td>Make text italic</td>
-              </tr>
-              <tr>
-                <td><kbd>Cmd/Ctrl + Shift + X</kbd></td>
-                <td>Cross out text (Strikethrough)</td>
-              </tr>
-              <tr>
-                <td><kbd>Cmd/Ctrl + E</kbd></td>
-                <td>Convert text to inline code block</td>
-              </tr>
-              <tr>
-                <td><kbd>Cmd/Ctrl + Z</kbd></td>
-                <td>Undo last action</td>
-              </tr>
-              <tr>
-                <td><kbd>Cmd/Ctrl + Shift + Z</kbd></td>
-                <td>Redo last action</td>
-              </tr>
+              <tr><td><kbd>Cmd/Ctrl + K</kbd></td><td>Open Search / Command Palette</td></tr>
+              <tr><td><kbd>Cmd/Ctrl + N</kbd></td><td>New Note</td></tr>
+              <tr><td><kbd>Cmd/Ctrl + \</kbd></td><td>Toggle Sidebar</td></tr>
+              <tr><td><kbd>Cmd/Ctrl + B</kbd></td><td>Bold</td></tr>
+              <tr><td><kbd>Cmd/Ctrl + I</kbd></td><td>Italic</td></tr>
+              <tr><td><kbd>Cmd/Ctrl + Shift + X</kbd></td><td>Strikethrough</td></tr>
+              <tr><td><kbd>Cmd/Ctrl + E</kbd></td><td>Inline Code</td></tr>
             </tbody>
           </table>
         </section>
 
         <hr class="doc-divider" />
 
-        <!-- Command Palette -->
+        <!-- Command Search -->
         <section id="command-palette" class="doc-section">
           <h2 class="doc-h2 font-display">Command Search</h2>
-          <p class="doc-p">Press <kbd>Cmd/Ctrl + K</kbd> anywhere in the app to open the search bar. This panel allows you to quickly search through note titles and contents, find tags, or navigate settings by typing quick keywords like <code class="inline-code">settings</code> or <code class="inline-code">trash</code>.</p>
+          <p class="doc-p">Press <kbd>Cmd/Ctrl + K</kbd> to open the palette powered by Fuse.js fuzzy search. Quickly scan titles, bodies, and tags, or type commands like <code class="inline-code">settings</code> or <code class="inline-code">trash</code>.</p>
         </section>
 
         <hr class="doc-divider" />
@@ -265,19 +158,8 @@
         <!-- Organization -->
         <section id="organization" class="doc-section">
           <h2 class="doc-h2 font-display">Organization</h2>
-          <p class="doc-p">Keep your notes tidy with folders, pinned notes, and automatic trash cleanups.</p>
-
-          <h3 id="folders" class="doc-h3">Nested Folders</h3>
-          <p class="doc-p">Click the <strong>+</strong> button in the sidebar to create a folder. You can drag and drop folders into other folders to create nesting hierarchies. Right-click (or long press) any folder to rename it, give it a custom color, add subfolders, or delete it.</p>
-          <div class="doc-callout info">
-            <strong>Deleting a folder</strong> moves all notes inside it to "Uncategorized". None of your notes are deleted.
-          </div>
-
-          <h3 id="favorites" class="doc-h3">Favorite Notes</h3>
-          <p class="doc-p">Click the star icon next to a note in the note list to pin it to your "Favorites" list in the sidebar for quick access.</p>
-
-          <h3 id="trash" class="doc-h3">Trash and Auto-Empty</h3>
-          <p class="doc-p">When you delete a note, it goes to the Trash. You can configure when Trash empties permanently by going to <strong>Settings → Preferences</strong>. Options include: after 7 days, after 30 days, or never (manual empty).</p>
+          <p class="doc-p"><strong>Nested Folders:</strong> Create subfolders and re-parent structures via drag-and-drop. Deleting a folder safely moves its notes to Uncategorized.</p>
+          <p class="doc-p"><strong>Favorites & Trash:</strong> Star notes to pin them in the sidebar. Configure automatic trash purging (7 days, 30 days, or never) under Settings.</p>
         </section>
 
         <hr class="doc-divider" />
@@ -285,76 +167,37 @@
         <!-- Security -->
         <section id="security" class="doc-section">
           <h2 class="doc-h2 font-display">How Privacy Works</h2>
-          <p class="doc-p">Aether Notes is built with "zero-knowledge" security. Your notes are scrambled (encrypted) before they are saved to your device. We never see your password, and we cannot access your notes.</p>
-
-          <h3 id="security-steps" class="doc-h3">Three Layers of Safety</h3>
-          <div class="doc-steps">
-            <div class="step">
-              <div class="step-num">1</div>
-              <div>
-                <strong>Your Private Password</strong>
-                <p>You choose a password when setting up your vault. It acts as the master key. It never leaves your head or device, and is never sent to any server.</p>
-              </div>
-            </div>
-            <div class="step">
-              <div class="step-num">2</div>
-              <div>
-                <strong>In-Memory Unlocking</strong>
-                <p>When you type your password, the browser temporarily unlocks your notes. This temporary key exists only in your browser's active memory and disappears as soon as you close the browser tab.</p>
-              </div>
-            </div>
-            <div class="step">
-              <div class="step-num">3</div>
-              <div>
-                <strong>Scrambled Local Files</strong>
-                <p>Your notes are stored on your device's browser database as a collection of scrambled characters. Without your password, they are completely unreadable.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="doc-callout warning">
-            <strong>If you lose your password, your data is lost forever.</strong> We do not store recovery keys. Please write your password down in a safe place.
-          </div>
-
-          <h3 id="change-password" class="doc-h3">Changing Your Password</h3>
-          <p class="doc-p">Go to <strong>Settings → Security</strong> to set a new password. The app will unlock your notes with your current key, encrypt them again with the new key in a split second, and delete the old key immediately.</p>
+          <p class="doc-p">All cryptographic operations run client-side via the Web Crypto API.</p>
+          <ul class="doc-list">
+            <li><strong>PBKDF2 Derivation:</strong> Key derived using PBKDF2 (100,000 iterations) with a local random salt.</li>
+            <li><strong>AES-256-GCM:</strong> Derived key encrypts/decrypts notes in-memory. The key never touches IndexedDB or localStorage.</li>
+            <li><strong>IndexedDB Storage:</strong> Encrypted ciphertext, random IV, and authentication tag are stored locally.</li>
+          </ul>
         </section>
 
         <hr class="doc-divider" />
 
         <!-- PWA -->
         <section id="pwa" class="doc-section">
-          <h2 class="doc-h2 font-display">App Installation & Offline</h2>
-          <p class="doc-p">Aether Notes works directly on the web, but you can also install it to run like a native app on your computer, tablet, or phone.</p>
-
-          <h3 id="install-pwa" class="doc-h3">How to Install</h3>
-          <p class="doc-p">When visiting the site, the app will show a subtle installation banner if it is not already installed:</p>
+          <h2 class="doc-h2 font-display">App Installation</h2>
+          <p class="doc-p">Install Aether Notes as a Progressive Web App (PWA) to run offline:</p>
           <ul class="doc-list">
-            <li><strong>On Desktop (Chrome/Edge/Safari)</strong>: Click the install icon in the browser address bar, or click "Install" on the pop-up prompt inside the app.</li>
-            <li><strong>On iPhone & iPad (Safari)</strong>: Tap the Share button in Safari, scroll down, and select <strong>Add to Home Screen</strong>.</li>
-            <li><strong>On Android (Chrome)</strong>: Tap the install banner at the bottom of the screen, or choose "Install App" from Chrome's menu.</li>
+            <li><strong>Desktop (Chrome/Edge/Safari):</strong> Click the install icon in the address bar.</li>
+            <li><strong>iOS Safari:</strong> Tap Share → Add to Home Screen.</li>
+            <li><strong>Android Chrome:</strong> Tap the install banner.</li>
           </ul>
-
-          <h3 id="offline-access" class="doc-h3">Working Offline</h3>
-          <p class="doc-p">Once installed, you do not need an internet connection. You can open the app, create notes, organize folders, and search your vault completely offline. Any changes you make are saved locally and will be there when you open the app again.</p>
         </section>
 
         <hr class="doc-divider" />
 
         <!-- Data Safety -->
         <section id="data-safety" class="doc-section">
-          <h2 class="doc-h2 font-display">Data Safety & Backups</h2>
-          <p class="doc-p">Since your data stays strictly on your local device, keeping backups is your responsibility. We provide built-in tools to make backups simple and easy.</p>
-
-          <h3 id="exporting" class="doc-h3">Exporting Your Notes</h3>
-          <p class="doc-p">To back up or move your notes, navigate to <strong>Settings</strong> and look at the <strong>Data Portability</strong> section:</p>
+          <h2 class="doc-h2 font-display">Data Safety & Backup</h2>
+          <p class="doc-p">Back up and download your data in Settings under Data Portability:</p>
           <ul class="doc-list">
-            <li><strong>Export Vault (JSON)</strong>: Download your entire notes database (including folder structures, tag configurations, settings, and note histories) as a single backup file. You can use this file to restore your notes on another device.</li>
-            <li><strong>Export All as Markdown (Zip)</strong>: Export all your notes as standard readable text files (.md) packaged in a simple folder.</li>
+            <li><strong>Export Vault (JSON):</strong> Full encrypted database snapshot file including settings and note history.</li>
+            <li><strong>Export Markdown (ZIP):</strong> Generates a folder structure containing all notes exported as raw Markdown (.md) text files inside a ZIP archive.</li>
           </ul>
-
-          <h3 id="importing" class="doc-h3">Importing a Backup</h3>
-          <p class="doc-p">If you switch devices or browsers, go to <strong>Settings → Import Vault</strong> and select your downloaded JSON backup file. Enter the password you used for that backup, and your entire folder structure and notes will be restored instantly.</p>
         </section>
 
       </main>

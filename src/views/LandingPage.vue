@@ -86,7 +86,7 @@
           <span class="italic-accent">fully yours.</span>
         </h1>
         <p class="hero-subtitle font-ui">
-          A beautifully minimal notes app that locks your data with secure, private encryption. No accounts, no trackers, and your notes never leave your device.
+          A minimal local-first notes editor secured with zero-knowledge AES-256-GCM encryption. Run entirely client-side with no accounts, no trackers, and complete offline capability.
         </p>
         <div class="hero-ctas font-ui">
           <router-link to="/note" class="hero-btn primary">Launch Editor →</router-link>
@@ -209,8 +209,8 @@
                 <path d="M3 12A9 3 0 0 0 21 12" />
               </svg>
             </div>
-            <h3 class="feature-heading">100% Private & Local</h3>
-            <p class="feature-desc">All your notes are stored directly on your device. They never upload to any server, meaning your private thoughts remain completely yours.</p>
+            <h3 class="feature-heading">Zero-Knowledge Privacy</h3>
+            <p class="feature-desc">Data is encrypted client-side using the Web Crypto API and stored in your browser's IndexedDB. We never see your password or notes.</p>
           </div>
 
           <!-- Card 2: Markdown -->
@@ -225,8 +225,8 @@
                 <polyline points="10 9 9 9 8 9" />
               </svg>
             </div>
-            <h3 class="feature-heading">Easy Formatting</h3>
-            <p class="feature-desc">Format your text instantly as you type. Headings, lists, bold text, and checkboxes are created automatically without clicking nested menus.</p>
+            <h3 class="feature-heading">Rich Markdown Editor</h3>
+            <p class="feature-desc">Powered by Tiptap (ProseMirror core), parsing Markdown inline formatting, inline `@tags` scroll-anchors, and slash commands on the fly.</p>
           </div>
 
           <!-- Card 3: Command palette -->
@@ -238,8 +238,8 @@
                 <path d="m21 21-4.3-4.3" />
               </svg>
             </div>
-            <h3 class="feature-heading">Instant Search</h3>
-            <p class="feature-desc">Press `Cmd+K` to search everything in a flash. Instantly jump between notes, look up tags, or run helper commands in milliseconds.</p>
+            <h3 class="feature-heading">Fuzzy Command Search</h3>
+            <p class="feature-desc">Press `Cmd/Ctrl + K` to trigger the Fuse.js-powered command palette. Search titles, contents, tags, or execute navigation commands instantly.</p>
           </div>
 
           <!-- Card 4: Nesting folders -->
@@ -250,8 +250,8 @@
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
               </svg>
             </div>
-            <h3 class="feature-heading">Organized Folders</h3>
-            <p class="feature-desc">Organize your thoughts with nested folders, tag highlights, and pinned favorites. Everything stays neat, tidy, and simple to navigate.</p>
+            <h3 class="feature-heading">Hierarchical Folders</h3>
+            <p class="feature-desc">Organize your thoughts with nested folders, star favorites, and configure automatic empty retention rules for trash.</p>
           </div>
         </div>
       </div>
@@ -269,8 +269,8 @@
           <!-- Flow 1 -->
           <div class="flow-step">
             <div class="flow-badge">1</div>
-            <h4 class="flow-title">Your Private Password</h4>
-            <p class="flow-desc">You choose a secure password. It is never sent to any server and stays only in your head.</p>
+            <h4 class="flow-title">PBKDF2 Derivation</h4>
+            <p class="flow-desc">Derive Master Key. PBKDF2 (100,000 iterations) with a local random salt creates a master key inside your browser.</p>
           </div>
           <div class="flow-connector" aria-hidden="true">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -282,8 +282,8 @@
           <!-- Flow 2 -->
           <div class="flow-step">
             <div class="flow-badge">2</div>
-            <h4 class="flow-title">Memory-Only Keys</h4>
-            <p class="flow-desc">Your browser uses your password to unlock your notes. The digital key exists only in your browser's active memory.</p>
+            <h4 class="flow-title">Memory-Only AES-256-GCM</h4>
+            <p class="flow-desc">In-Memory Cryptography. AES-256-GCM encrypts/decrypts notes in active memory. Keys are never saved to localStorage or IndexedDB.</p>
           </div>
           <div class="flow-connector" aria-hidden="true">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -295,8 +295,8 @@
           <!-- Flow 3 -->
           <div class="flow-step">
             <div class="flow-badge">3</div>
-            <h4 class="flow-title">Scrambled Storage</h4>
-            <p class="flow-desc">Notes are stored as scrambled, encrypted text on your device. Without your password, your database is just gibberish.</p>
+            <h4 class="flow-title">Encrypted IndexedDB</h4>
+            <p class="flow-desc">Encrypted Storage. Only scrambled ciphertext, randomized initialization vectors (IVs), and GCM authentication tags are written locally.</p>
           </div>
         </div>
       </div>

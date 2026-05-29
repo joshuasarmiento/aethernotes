@@ -40,6 +40,9 @@
 
     <!-- PWA Installation Prompt Dialog -->
     <PwaInstallPrompt />
+
+    <!-- Documentation Dialog -->
+    <DocsDialog v-if="uiStore.isDocsOpen" @close="uiStore.isDocsOpen = false" />
   </div>
 </template>
 
@@ -60,6 +63,7 @@ import NoteList from '@/components/note-list/NoteList.vue';
 import StatusBar from './StatusBar.vue';
 import CommandPalette from '@/components/search/CommandPalette.vue';
 import PwaInstallPrompt from './PwaInstallPrompt.vue';
+import DocsDialog from './DocsDialog.vue';
 
 const route = useRoute();
 const uiStore = useUiStore();
