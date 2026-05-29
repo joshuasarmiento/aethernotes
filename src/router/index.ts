@@ -4,12 +4,18 @@ import AppShell from '@/components/layout/AppShell.vue';
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
+    name: 'landing',
+    component: () => import('@/views/LandingPage.vue'),
+  },
+  {
+    path: '/download',
+    name: 'download',
+    component: () => import('@/views/DownloadPage.vue'),
+  },
+  {
+    path: '/',
     component: AppShell,
     children: [
-      {
-        path: '',
-        redirect: '/note',
-      },
       {
         path: 'note',
         name: 'note-empty',
