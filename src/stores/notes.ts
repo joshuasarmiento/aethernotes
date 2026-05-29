@@ -35,6 +35,10 @@ export const useNotesStore = defineStore('notes', () => {
     notes.value.filter(n => n.isTrashed)
   );
 
+  const favoriteNotes = computed(() => 
+    activeNotes.value.filter(n => n.isFavorite)
+  );
+
   const tagsList = computed(() => {
     const counts: Record<string, number> = {};
     activeNotes.value.forEach(note => {
@@ -293,6 +297,7 @@ export const useNotesStore = defineStore('notes', () => {
     allNotes,
     activeNotes,
     trashedNotes,
+    favoriteNotes,
     tagsList,
     loadNotes,
     decryptAllNotes,
