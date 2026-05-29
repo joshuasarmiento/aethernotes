@@ -4,9 +4,6 @@ import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
 export default defineConfig({
-  // Set the base to the repo name when building for GitHub Pages.
-  // In local dev (process.env.NODE_ENV !== 'production') this is '/' automatically.
-  base: process.env.GITHUB_ACTIONS ? '/aethernotes/' : '/',
   plugins: [
     vue(),
     VitePWA({
