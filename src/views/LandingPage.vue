@@ -13,6 +13,26 @@
           <a href="#features">Features</a>
           <a href="#security">Security</a>
           <a href="https://github.com/joshuasarmiento/aether-notes" target="_blank" rel="noopener">GitHub</a>
+
+          <!-- Theme toggle -->
+          <button class="theme-toggle" @click="cycleTheme" :aria-label="`Switch theme (current: ${settingsStore.theme})`">
+            <!-- System -->
+            <svg v-if="settingsStore.theme === 'system'" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="14" x="2" y="3" rx="2" />
+              <line x1="8" x2="16" y1="21" y2="21" />
+              <line x1="12" x2="12" y1="17" y2="21" />
+            </svg>
+            <!-- Dark -->
+            <svg v-else-if="settingsStore.theme === 'dark'" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+            </svg>
+            <!-- Light -->
+            <svg v-else xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2M12 20v2m-7.07-14.07 1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2m-15.07 5.66-1.41 1.41M19.07 4.93l-1.41 1.41" />
+            </svg>
+          </button>
+
           <router-link to="/note" class="cta-btn">Launch App →</router-link>
         </nav>
       </div>
@@ -189,6 +209,17 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useSettingsStore } from '@/stores/settings';
+import { useTheme } from '@/composables/useTheme';
+
+const settingsStore = useSettingsStore();
+useTheme();
+
+function cycleTheme() {
+  const themes: ('light' | 'dark' | 'system')[] = ['light', 'dark', 'system'];
+  const nextIdx = (themes.indexOf(settingsStore.theme) + 1) % themes.length;
+  settingsStore.setSetting('theme', themes[nextIdx]);
+}
 
 interface SimulatedLine {
   text: string;
@@ -381,6 +412,30 @@ onUnmounted(() => {
 
 .nav-links a:hover {
   color: var(--text-primary);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  transition: color var(--duration-fast) var(--ease-out),
+              background var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out);
+}
+
+.theme-toggle:hover {
+  color: var(--text-primary);
+  background: var(--hover-bg);
+  border-color: var(--border);
 }
 
 .cta-btn {
