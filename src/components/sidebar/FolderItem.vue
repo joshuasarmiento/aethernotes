@@ -9,9 +9,10 @@
       :style="{ paddingLeft: `${depth * 12 + 12}px` }"
       draggable="true"
       @dragstart="onDragStart($event, folder.id)"
-      @dragover.prevent="onDragOver"
-      @dragleave="onDragLeave"
-      @drop="onDrop($event, folder.id)"
+      @dragend="onDragEnd"
+      @dragover.prevent="onDragOver($event)"
+      @dragleave="onDragLeave($event)"
+      @drop.stop="onDrop($event, folder.id)"
       @click="selectFolder"
       @contextmenu.prevent="onContextMenu($event)"
     >
@@ -82,18 +83,36 @@ function emitContextMenu(payload: { event: MouseEvent; folder: Folder }) {
 }
 
 // Drag & Drop
+// Track the ID being dragged globally so drop targets can self-exclude
+let currentDragId = '';
+
 function onDragStart(event: DragEvent, folderId: string) {
   if (event.dataTransfer) {
     event.dataTransfer.setData('text/plain', folderId);
     event.dataTransfer.effectAllowed = 'move';
+    currentDragId = folderId;
   }
+  // Prevent the dragged row from immediately highlighting itself
+  isDragOver.value = false;
 }
 
-function onDragOver() {
+function onDragEnd() {
+  isDragOver.value = false;
+  currentDragId = '';
+}
+
+function onDragOver(event: DragEvent) {
+  // Don't highlight the folder being dragged
+  if (currentDragId === props.folder.id) return;
+  event.dataTransfer!.dropEffect = 'move';
   isDragOver.value = true;
 }
 
-function onDragLeave() {
+function onDragLeave(event: DragEvent) {
+  // Only clear if the pointer truly left this element — not just moved
+  // into a child node. relatedTarget will be null or outside the element.
+  const related = event.relatedTarget as HTMLElement | null;
+  if (related && (event.currentTarget as HTMLElement).contains(related)) return;
   isDragOver.value = false;
 }
 
@@ -102,27 +121,18 @@ async function onDrop(event: DragEvent, targetId: string) {
   if (!event.dataTransfer) return;
 
   const draggedId = event.dataTransfer.getData('text/plain');
-  if (draggedId && draggedId !== targetId) {
-    // Avoid cyclic parenting
-    const isDescendant = (parent: FolderNode, childId: string): boolean => {
-      if (parent.id === childId) return true;
-      return parent.children.some(c => isDescendant(c, childId));
-    };
+  if (!draggedId || draggedId === targetId) return;
 
-    const draggedNode = foldersStore.folders.find(f => f.id === draggedId);
-    
-    if (draggedNode && targetId !== draggedNode.id) {
-      // Check if target is descendant of dragged node
-      const draggedTreeNode = findNodeInTree(foldersStore.folderTree, draggedId);
-      if (draggedTreeNode && isDescendant(draggedTreeNode, targetId)) {
-        // Can't drag a parent into its own child
-        return;
-      }
-      
-      // Update parent folder reference
-      await foldersStore.updateFolder(draggedId, { parentId: targetId });
-    }
-  }
+  // Prevent dropping a parent into its own descendant
+  const isDescendant = (parent: FolderNode, childId: string): boolean => {
+    if (parent.id === childId) return true;
+    return parent.children.some(c => isDescendant(c, childId));
+  };
+
+  const draggedTreeNode = findNodeInTree(foldersStore.folderTree, draggedId);
+  if (draggedTreeNode && isDescendant(draggedTreeNode, targetId)) return;
+
+  await foldersStore.updateFolder(draggedId, { parentId: targetId });
 }
 
 function findNodeInTree(nodes: FolderNode[], id: string): FolderNode | null {
