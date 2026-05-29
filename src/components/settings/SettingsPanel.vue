@@ -97,6 +97,12 @@
               <span class="port-desc">Download all your notes and folder hierarchies as a JSON backup file.</span>
               <button class="port-btn export-btn" @click="exportVault">Export Vault (JSON)</button>
             </div>
+
+            <div class="portability-group">
+              <span class="port-label">Export Markdown (ZIP)</span>
+              <span class="port-desc">Download all your active notes as plain text Markdown (.md) files in a ZIP archive.</span>
+              <button class="port-btn export-btn" @click="exportMarkdownZip">Export All (ZIP)</button>
+            </div>
             
             <div class="portability-group">
               <span class="port-label">Import Vault</span>
@@ -124,6 +130,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import JSZip from 'jszip';
 import { useSettingsStore } from '@/stores/settings';
 import { useNotesStore } from '@/stores/notes';
 import { useFoldersStore } from '@/stores/folders';
@@ -146,6 +153,64 @@ function togglePref(key: 'spellcheck' | 'lineWrapping' | 'showLineNumbers') {
 }
 
 // Data Portability Actions
+
+async function exportMarkdownZip() {
+  try {
+    const zip = new JSZip();
+    const activeNotes = notesStore.notes.filter(n => !n.isTrashed);
+
+    if (activeNotes.length === 0) {
+      alert('No active notes to export.');
+      return;
+    }
+
+    const usedPaths = new Set<string>();
+
+    for (const note of activeNotes) {
+      let folderPath = '';
+      if (note.folder) {
+        const folder = foldersStore.folders.find(f => f.id === note.folder);
+        if (folder) {
+          folderPath = folder.path;
+        }
+      }
+
+      const sanitizedTitle = note.title.replace(/[\\/:*?"<>|]/g, '_') || 'Untitled Note';
+      let relativePath = sanitizedTitle + '.md';
+      if (folderPath) {
+        relativePath = `${folderPath}/${relativePath}`;
+      }
+
+      // Handle duplicate paths inside ZIP
+      let counter = 1;
+      let finalPath = relativePath;
+      while (usedPaths.has(finalPath.toLowerCase())) {
+        const uniqueTitle = `${sanitizedTitle}_${counter}`;
+        relativePath = uniqueTitle + '.md';
+        if (folderPath) {
+          finalPath = `${folderPath}/${relativePath}`;
+        } else {
+          finalPath = relativePath;
+        }
+        counter++;
+      }
+
+      usedPaths.add(finalPath.toLowerCase());
+      zip.file(finalPath, note.content);
+    }
+
+    const content = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(content);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `aether-notes-markdown-${new Date().toISOString().slice(0, 10)}.zip`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error('Failed to export markdown zip:', err);
+    alert('Failed to export markdown zip.');
+  }
+}
 
 async function exportVault() {
   try {
